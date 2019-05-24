@@ -84,7 +84,11 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+    </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -115,6 +119,19 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="GameGraphics.h" />
+    <ClInclude Include="KeyboardInput.h" />
+    <ClInclude Include="KeyboardInput_win.h" />
+    <ClInclude Include="TerminalGraphics.h" />
+    <ClInclude Include="TerminalGraphics_win.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="GameGraphics.cpp" />
+    <ClCompile Include="KeyboardInput.cpp" />
+    <ClCompile Include="KeyboardInput_win.cpp" />
+    <ClCompile Include="TerminalGraphics.cpp" />
+    <ClCompile Include="TerminalGraphics_win.cpp" />
+    <ClCompile Include="TerminalTest.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

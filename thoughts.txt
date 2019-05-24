@@ -1,0 +1,49 @@
+Program Ideas:
+
+	Info Gathering:
+		Search N subfolders (N is based on RNG/cost of program)
+			Can be further subcategorized based on types of files it can detect (.exe, .key)
+		Identify all programs running
+		Check folder meta -> history, permissions, encryption type
+		
+	Objective Based:
+		Encrypt folder/file - only defender?
+			Uses a type of encryption
+			Difficulty depends on total size
+		Decrypt folder/file - only attacker? -- Can be used for victory condition
+			Uses a .key to unlock compatible encryption
+			Diff depends on size
+		Make symbolic link - allows you to make random folder (is this useful?)
+		Delete sym link - is this useful?
+		
+	Against Opponents:
+		Defender only:
+			Purge folder -- Can be used for victory condition
+				Duration to purge depends on folder size
+				Cannot purge trade secret/target file
+		Attacker only:
+			Send fake roaming .exe (as decoy intruders)
+		Both:
+			Change keyboard layout
+			Freeze user folder viewport
+			
+		
+Types of Files:
+	.sym - link that is a 1-way bridge to some other folder
+	.key - encryption key that unlocks a type of encryption
+	.exe - program that can be used. Attacker also appears as a .exe
+	.csv, .txt, .config, .doc, .mp3, .mp4, .vir, .etc - filler files just for fluff/noise
+	
+Notes on encryption/decryption mechanics:
+	If player is inside a folder when encrypted, they will be booted to network view
+	encryption/decryption should have 1 value number associated with it that determines the effective speed
+		t_sec = folder_size / prog_value
+		
+Game logic should be hosted on defender computer
+
+System Announcements:
+	Folder you're in is being encrypted/purged
+	If id_prog.exe is running, shows currently executing programs
+	Message detailing program finished running
+	
+	
