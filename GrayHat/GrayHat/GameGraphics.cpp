@@ -112,13 +112,13 @@ void GameGraphics::setProgramPercent(std::string program, int percent)
 void GameGraphics::setInputBuffer(std::string text)
 {
 	editing = true;
-
+	bufferText = text;
 	editing = false;
 }
 
 void GameGraphics::addBufferHistory(std::string text)
 {
 	editing = true;
-
+	bufferHistory.push_back(text);
 	editing = false;
 }

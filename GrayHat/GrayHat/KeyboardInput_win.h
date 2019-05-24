@@ -1,6 +1,8 @@
 #pragma once
 #include "KeyboardInput.h"
 #include <Windows.h>
+#include <thread>
+#include <chrono>
 
 class KeyboardInput_win : public KeyboardInput
 {
@@ -12,25 +14,29 @@ class KeyboardInput_win : public KeyboardInput
 		std::string init();
 		std::string clean();
 		void run();
+		void setMaxBufferSize(int l);
 
 private:
 
-	/*void poll();
+	void poll();
 	void addToBuffer(char c);
 	bool isCaps(int keycode);
 	void moveCursor(int dir);
 	void backspacePressed();
-	void deletePressed();*/
+	void deletePressed();
 
 	std::string buffer;
 	std::string prevBuffers;
 	int cursorPos;
 
-
-	/*
+	std::thread pollingThread;
+	bool running, reading;
+	
 	const static int numKeys = 50;
 	bool curPressed[numKeys];
 	bool prevPressed[numKeys];
+
+	int MAX_BUFFER_LENGTH = 55;
 
 	const static int IS_PRESSED = 0x8000;
 	const static int IS_TOGGLED = 1;
@@ -83,6 +89,6 @@ private:
 	const static int KEY_DOWN = 45;
 	const static int KEY_RIGHT = 46;
 	const static int KEY_LEFT = 47;
-	*/
+	
 };
 

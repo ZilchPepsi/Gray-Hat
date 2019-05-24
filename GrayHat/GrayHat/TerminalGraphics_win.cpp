@@ -75,7 +75,7 @@ void TerminalGraphics_win::setCursorVisible(bool visible)
 {
 	CONSOLE_CURSOR_INFO cursor;
 	GetConsoleCursorInfo(outHandle, &cursor);
-	cursor.bVisible = visible; // set to false to perm hide
+	cursor.bVisible = false; // set to visible to actually have func
 	if (visible)
 		cursor.dwSize = 10;
 	else

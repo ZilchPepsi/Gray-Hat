@@ -1,27 +1,46 @@
 #include "KeyboardInput_win.h"
 
 
-KeyboardInput_win::KeyboardInput_win(){}
-KeyboardInput_win::~KeyboardInput_win(){}
+KeyboardInput_win::KeyboardInput_win()
+{
+	init();
+}
+
+KeyboardInput_win::~KeyboardInput_win()
+{
+	running = false;
+	if (pollingThread.joinable())
+	{
+		pollingThread.join();
+	}
+}
 
 std::string KeyboardInput_win::getInputBuffer()
 {
 	return buffer;
 }
 
+void KeyboardInput_win::setMaxBufferSize(int l)
+{
+	MAX_BUFFER_LENGTH = l;
+}
+
 std::string KeyboardInput_win::init()
 {
-	/*
 	for (int i = 0; i < numKeys; i++)
 	{
 		curPressed[i] = false;
 		prevPressed[i] = false;
 	}
 	cursorPos = 0;
-	*/
+	
 	buffer = "";
 	prevBuffers = "";
 
+	//setup polling thread
+	running = true;
+	reading = false;
+	pollingThread = std::thread(&KeyboardInput_win::run, this);
 
 	return "KYBD INIT\n";
 }
@@ -34,10 +53,17 @@ std::string KeyboardInput_win::clean()
 
 void KeyboardInput_win::run()
 {
-
+	//setup loop for polling
+	while (running) 
+	{
+		if (!reading)
+		{
+			poll();
+		}
+	}
 }
 
-/*
+
 bool KeyboardInput_win::isCaps(int keycode)
 {
 	if (curPressed[KEY_SHIFT] != curPressed[KEY_CAPS])
@@ -48,8 +74,11 @@ bool KeyboardInput_win::isCaps(int keycode)
 
 void KeyboardInput_win::addToBuffer(char c)
 {
-	buffer.insert(cursorPos, std::to_string(c));
-	cursorPos++;
+	if (buffer.length() < MAX_BUFFER_LENGTH)
+	{
+		buffer.insert(cursorPos, std::to_string(c));
+		cursorPos++;
+	}
 }
 
 void KeyboardInput_win::moveCursor(int dir)
@@ -76,7 +105,7 @@ void KeyboardInput_win::backspacePressed()
 		}
 		else
 		{
-			buffer = buffer.substr()
+			//buffer = buffer.substr()
 		}
 	}
 }
@@ -85,7 +114,7 @@ void KeyboardInput_win::deletePressed()
 {
 	if (cursorPos < buffer.length())
 	{
-		buffer = buffer.substr(0,)
+		//buffer = buffer.substr(0,)
 	}
 }
 
@@ -530,4 +559,3 @@ void KeyboardInput_win::poll()
 	}
 }
 
-*/

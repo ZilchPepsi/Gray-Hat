@@ -4,15 +4,17 @@
 #include <iostream>
 #include <chrono>
 #include "GameGraphics.h"
+#include "KeyboardInput_win.h"
 
 int main()
 {
 	GameGraphics gg;
+	KeyboardInput_win ki;
 
 	gg.addProgram("test_program");
 	gg.setProgramPercent("test program", 53);
 
-	//gg.run();
+	std::string currentBuffer;
 	
 	gg.addProgram("test_multithreading");
 	for (int i=0; i<100000; i++)
@@ -20,6 +22,10 @@ int main()
 		gg.setProgramPercent("test_multithreading", i % 100);
 
 		std::this_thread::sleep_for(std::chrono::milliseconds(100));
+
+		//test keyboard input
+		currentBuffer = ki.getInputBuffer();
+		gg.setInputBuffer(currentBuffer);
 	}
 
 	system("pause");
