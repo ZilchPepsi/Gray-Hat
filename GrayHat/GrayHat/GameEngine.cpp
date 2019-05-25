@@ -3,7 +3,7 @@
 
 
 GameEngine::GameEngine()
-{
+{ 
 	init();
 }
 

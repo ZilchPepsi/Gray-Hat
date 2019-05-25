@@ -4,14 +4,17 @@
 
 class FileSystem
 {
-public:
-	FileSystem();
-	~FileSystem();
+	public:
 
-	int generateSystem();
-	FileSystemObject* getRoot();
-	static int treeSize(FileSystemObject);
-private:
-	FileSystemObject root;
+		FileSystem();
+		~FileSystem();
+
+		int generateSystem();
+		FileSystemObject* getRoot();
+		static int treeSize(FileSystemObject);
+	
+	private:
+		
+		FileSystemObject root;// ("placeholder_name", FileSystemObject::TYPE_ERR);
 };
 

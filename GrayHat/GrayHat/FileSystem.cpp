@@ -2,8 +2,9 @@
 
 
 
-FileSystem::FileSystem()
+FileSystem::FileSystem() : root("iuabdsfv",FileSystemObject::TYPE_ERR)
 {
+	
 }
 
 
