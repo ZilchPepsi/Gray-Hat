@@ -1,1 +1,6 @@
 .vs
+**/*.vcxpro*
+**/Debug/
+*.sln
+*.swp
+
