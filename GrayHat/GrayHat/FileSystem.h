@@ -11,7 +11,7 @@ class FileSystem
 
 		int generateSystem();
 		FileSystemObject* getRoot();
-		static int treeSize(FileSystemObject);
+		int treeSize(FileSystemObject);
 	
 	private:
 		

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "FileSystemObject.h"
-
+#include <vector>
 
 class FileSystemFolder : public FileSystemObject
 {

@@ -3,6 +3,7 @@
 #include "GameGraphics.h"
 #include "KeyboardInput_win.h"
 //#include "Player.h"
+#include "FileSystem.h"
 #include <string>
 #include <vector>
 #include <chrono>
@@ -21,6 +22,7 @@ class GameEngine
 		
 		GameGraphics gg;
 		KeyboardInput_win ki;
+		FileSystem fs;
 		//std::vector<Player> players;
 		
 		bool running;

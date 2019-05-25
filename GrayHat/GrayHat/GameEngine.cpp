@@ -20,6 +20,9 @@ int GameEngine::init()
 
 	gg.addProgram("test_multithreading");
 
+	// init FileSystem
+	fs.generateSystem();
+
 	return 0;
 }
 
