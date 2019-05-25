@@ -3,6 +3,7 @@
 #include <Windows.h>
 #include <thread>
 #include <chrono>
+#include <queue>
 
 class KeyboardInput_win : public KeyboardInput
 {
@@ -15,6 +16,7 @@ class KeyboardInput_win : public KeyboardInput
 		std::string clean();
 		void run();
 		void setMaxBufferSize(int l);
+		std::string popBufferQueue();
 
 private:
 
@@ -27,7 +29,7 @@ private:
 	void enterPressed();
 
 	std::string buffer;
-	std::string prevBuffers;
+	std::queue<std::string> prevBuffers;
 	int cursorPos;
 
 	std::thread pollingThread;

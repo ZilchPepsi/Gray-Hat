@@ -35,7 +35,7 @@ std::string KeyboardInput_win::init()
 	cursorPos = 0;
 	
 	buffer = "";
-	prevBuffers = "";
+	//prevBuffers.empty();
 
 	//setup polling thread
 	running = true;
@@ -123,9 +123,22 @@ void KeyboardInput_win::deletePressed()
 
 void KeyboardInput_win::enterPressed()
 {
-	prevBuffers = buffer;
+	prevBuffers.push(buffer);
 	buffer = "";
 	cursorPos = 0;
+}
+
+std::string KeyboardInput_win::popBufferQueue()
+{
+	std::string retval = ""; 
+	
+	if (!(prevBuffers.empty()))
+	{
+		retval = prevBuffers.front();
+		prevBuffers.pop();
+	}
+
+	return retval;
 }
 
 void KeyboardInput_win::poll()
@@ -154,6 +167,10 @@ void KeyboardInput_win::poll()
 	if (GetKeyState(VK_DELETE) & IS_PRESSED)
 	{
 		curPressed[KEY_DEL] = true;
+	}
+	if (GetKeyState(VK_SPACE) & IS_PRESSED)
+	{
+		curPressed[KEY_SPACE] = true;
 	}
 
 	// set number curPressed
@@ -565,9 +582,9 @@ void KeyboardInput_win::poll()
 	{
 		backspacePressed();
 	}
-	if (curPressed[KEY_DEL] && !(prevPressed[KEY_DEL]))
+	if (curPressed[KEY_SPACE] && !(prevPressed[KEY_SPACE]))
 	{
-		
+		addToBuffer(' ');
 	}
 	if (curPressed[KEY_ENTER] && !(prevPressed[KEY_ENTER]))
 	{

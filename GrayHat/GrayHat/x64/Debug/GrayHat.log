@@ -1,2 +1,3 @@
-﻿  TerminalGraphics_win.cpp
+﻿  GameGraphics.cpp
+d:\development\github\gray-hat\grayhat\grayhat\gamegraphics.cpp(104): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
   GrayHat.vcxproj -> D:\Development\github\Gray-Hat\GrayHat\x64\Debug\GrayHat.exe

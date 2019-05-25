@@ -47,6 +47,7 @@ class GameGraphics
 		int curProgPercentCol = (CHAR_WIDTH / 2) - 6;
 		int curBufferRow = CHAR_HEIGHT - 1;
 		int bufferHistoryRow = curBufferRow - 1;
+		int maxBufferHistLines = 5;
 
 		// render helper functions
 		void drawPartitionLine();

@@ -6,7 +6,8 @@
 #include "GameGraphics.h"
 #include "KeyboardInput_win.h"
 
-int main()
+
+void unitTestGraphics()
 {
 	GameGraphics gg;
 	KeyboardInput_win ki;
@@ -15,9 +16,9 @@ int main()
 	gg.setProgramPercent("test program", 53);
 
 	std::string currentBuffer;
-	
+
 	gg.addProgram("test_multithreading");
-	for (int i=0; i<100000; i++)
+	for (int i = 0; i < 100000; i++)
 	{
 		gg.setProgramPercent("test_multithreading", i % 100);
 
@@ -26,9 +27,20 @@ int main()
 		//test keyboard input
 		currentBuffer = ki.getInputBuffer();
 		gg.setInputBuffer(currentBuffer);
+
+		//add prev buffers
+		std::string prevBuffer = ki.popBufferQueue();
+		if (prevBuffer != "")
+			gg.addBufferHistory(prevBuffer);
 	}
 
 	system("pause");
+}
+
+int main()
+{
+	unitTestGraphics();
 	return 0;
 }
+
 

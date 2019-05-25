@@ -48,6 +48,7 @@ void GameGraphics::render()
 
 	drawPartitionLine();
 	drawRunningProgs();
+	drawBufferHist();
 	drawBufferText();
 
 	graphics.setCursorVisible(true);
@@ -96,6 +97,18 @@ void GameGraphics::drawRunningProgs()
 	}
 }
 
+void GameGraphics::drawBufferHist()
+{
+	char bufferStr[40];
+	int histRow = 1;
+	for (int i = bufferHistory.size() - 1; i >= 0; i--)
+	{
+		sprintf_s(bufferStr, "%-37s", bufferHistory[i].c_str());;
+		graphics.writeText(bufferStr, CHAR_HEIGHT - 1 - histRow, (CHAR_WIDTH / 2) + 1, TerminalGraphics::CC_DEFAULT);
+		histRow++;
+	}
+}
+
 void GameGraphics::setProgramPercent(std::string program, int percent)
 {
 	editing = true;
@@ -120,5 +133,9 @@ void GameGraphics::addBufferHistory(std::string text)
 {
 	editing = true;
 	bufferHistory.push_back(text);
+	if (bufferHistory.size() > maxBufferHistLines)
+	{
+		bufferHistory.erase(bufferHistory.begin());
+	}
 	editing = false;
 }
