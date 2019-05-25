@@ -5,7 +5,7 @@
 class FileSystemObject
 {
 public:
-	FileSystemObject(std::string str, int typ);
+	FileSystemObject(const std::string str, int typ);
 	virtual ~FileSystemObject();
 
 	virtual std::string getName();
@@ -31,8 +31,8 @@ public:
 
 
 protected:
-	std::string name;
-	int type;
+	const std::string name;
+	const int type;
 	std::string displayName;
 	int displayType;
 	int encryption;

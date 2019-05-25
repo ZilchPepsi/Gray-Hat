@@ -2,10 +2,8 @@
 
 
 
-FileSystemObject::FileSystemObject(std::string str, int typ)
+FileSystemObject::FileSystemObject(const std::string str, int typ):name(str),type(typ)
 {
-	name = str;
-	type = typ;
 	displayName = str;
 	displayType = typ;
 }
