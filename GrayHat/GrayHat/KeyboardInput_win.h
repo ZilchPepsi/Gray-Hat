@@ -24,6 +24,7 @@ private:
 	void moveCursor(int dir);
 	void backspacePressed();
 	void deletePressed();
+	void enterPressed();
 
 	std::string buffer;
 	std::string prevBuffers;

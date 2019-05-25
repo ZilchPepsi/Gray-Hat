@@ -29,7 +29,8 @@ class GameGraphics
 		std::vector<std::string> curProgNames;
 		std::vector<int> curProgPercent;
 
-		std::string bufferText;
+		char bufferText[40];
+		//std::string bufferText;
 		std::vector<std::string> bufferHistory;
 
 		TerminalGraphics_win graphics;

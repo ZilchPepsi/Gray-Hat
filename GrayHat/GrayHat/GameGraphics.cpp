@@ -18,7 +18,7 @@ void GameGraphics::init()
 	std::string retval = graphics.init();
 	graphics.setScreenSize(SCRN_HEIGHT, SCRN_WIDTH);
 
-	bufferText = "";
+	//bufferText = "";
 	running = true;
 	editing = false;
 
@@ -112,7 +112,7 @@ void GameGraphics::setProgramPercent(std::string program, int percent)
 void GameGraphics::setInputBuffer(std::string text)
 {
 	editing = true;
-	bufferText = text;
+	sprintf_s(bufferText, "%-37s", text.c_str());;
 	editing = false;
 }
 

@@ -76,7 +76,8 @@ void KeyboardInput_win::addToBuffer(char c)
 {
 	if (buffer.length() < MAX_BUFFER_LENGTH)
 	{
-		buffer.insert(cursorPos, std::to_string(c));
+		buffer += c;
+		//buffer.insert(cursorPos, std::to_string(c));
 		cursorPos++;
 	}
 }
@@ -95,7 +96,9 @@ void KeyboardInput_win::backspacePressed()
 {
 	if (cursorPos > 0)
 	{
-		if (cursorPos == 1)
+		buffer = buffer.substr(0, buffer.length() - 2);
+		cursorPos--;
+		/*if (cursorPos == 1)
 		{
 			buffer = buffer.substr(1, buffer.length() - 1);
 		}
@@ -106,7 +109,7 @@ void KeyboardInput_win::backspacePressed()
 		else
 		{
 			//buffer = buffer.substr()
-		}
+		}*/
 	}
 }
 
@@ -116,6 +119,13 @@ void KeyboardInput_win::deletePressed()
 	{
 		//buffer = buffer.substr(0,)
 	}
+}
+
+void KeyboardInput_win::enterPressed()
+{
+	prevBuffers = buffer;
+	buffer = "";
+	cursorPos = 0;
 }
 
 void KeyboardInput_win::poll()
@@ -548,6 +558,20 @@ void KeyboardInput_win::poll()
 			addToBuffer('Z');
 		else
 			addToBuffer('z');
+	}
+
+	// unique actions
+	if (curPressed[KEY_BACK] && !(prevPressed[KEY_BACK]))
+	{
+		backspacePressed();
+	}
+	if (curPressed[KEY_DEL] && !(prevPressed[KEY_DEL]))
+	{
+		
+	}
+	if (curPressed[KEY_ENTER] && !(prevPressed[KEY_ENTER]))
+	{
+		enterPressed();
 	}
 
 	//push cur to prev and clear cur

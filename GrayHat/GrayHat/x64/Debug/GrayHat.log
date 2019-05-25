@@ -1,5 +1,2 @@
-﻿  KeyboardInput_win.cpp
-d:\development\github\gray-hat\grayhat\grayhat\keyboardinput_win.cpp(89): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
-  TerminalTest.cpp
-  Generating Code...
+﻿  GameGraphics.cpp
   GrayHat.vcxproj -> D:\Development\github\Gray-Hat\GrayHat\x64\Debug\GrayHat.exe
