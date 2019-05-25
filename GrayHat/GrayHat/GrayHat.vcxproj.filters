@@ -50,5 +50,8 @@
     <ClCompile Include="TerminalTest.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="network_test_win.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
