@@ -4,15 +4,38 @@
 #include <WinSock2.h>
 #include <WS2tcpip.h>
 #include <thread>
+#include <mutex>
+
+#include "NetworkConstants.h"
 
 #pragma comment(lib, "Ws2_32.lib")
 
-#define PORT "10004"
+
+
 
 class Client
 {
 public:
-	Client();
+	Client(const char* ip);
 	~Client();
+
+	void start();
+	int sendBytes(const SOCKET* client, const byte* const bytes, int size) const;
+	int getStatus();
+	void start();
+
+private:
+	char recvbuf[RECVBUF_SIZE];
+	int recvbuflen = RECVBUF_SIZE;
+	std::mutex recvMutex;
+	const char* ipaddr;
+
+	struct timeval recv_timeout, send_timeout;
+	volatile int status;
+	SOCKET c_socket;
+	WSADATA wsaData;
+	std::thread thread;
+
+	void _startClient();
 };
 

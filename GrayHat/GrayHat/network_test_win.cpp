@@ -7,7 +7,7 @@
 //
 //#define PORT "10004"
 //
-#include "Server.h"
+#include "Server_win.h"
 //
 //enum SocketStatus {
 //	DOWN,
