@@ -1,5 +1,4 @@
 .vs
-
 **/*.vcxproj*
+**/Debug/
 
-**/debug/

@@ -17,6 +17,7 @@ class ServerSocket {
 public:
 	int err;
 	enum SocketStatus socketStatus;
+
 	ServerSocket() {
 		s_socket = INVALID_SOCKET;
 		err = 0;
@@ -25,19 +26,23 @@ public:
 	~ServerSocket() {
 		closesocket(s_socket);
 		WSACleanup();
+		if (serverThread.joinable()) {
+			serverThread.join();
+		}
 	}
 
-	std::thread start() {
-		return std::thread(&ServerSocket::_startServer,this);
+	void start() {
+		serverThread = std::thread(&ServerSocket::_startServer,this);
 	}
 
 private:
 	SOCKET s_socket;
 	WSADATA wsaData;
+	std::thread serverThread;
 
 	void _startServer() {
-		int iResult;
 
+		int iResult;
 		if (iResult = WSAStartup(MAKEWORD(2, 2), &wsaData)) {
 			printf("WSAStartup failed in server: %d\n", iResult);
 			err  = 1;
@@ -55,6 +60,7 @@ private:
 		hints.ai_protocol = IPPROTO_TCP;
 		hints.ai_flags = AI_PASSIVE;
 
+
 		//Resolve the local address and port to be used by the server
 		if (iResult = getaddrinfo(NULL, PORT, &hints, &result)) {
 			printf("getaddrinfo failed in server: %d\n", iResult);
@@ -64,14 +70,22 @@ private:
 			return;
 		}
 
-		s_socket = INVALID_SOCKET;
-
 		for (ptr = result; ptr != NULL; ptr = ptr->ai_next) {
 
-			s_socket = socket(result->ai_family, result->ai_socktype, result->ai_protocol);
+			if (iResult = WSAStartup(MAKEWORD(2, 2), &wsaData)) {
+				printf("WSAStartup failed in server: %d\n", iResult);
+				err = 1;
+				socketStatus = ERR;
+				return;
+			}
+			s_socket = socket(ptr->ai_family, ptr->ai_socktype, ptr->ai_protocol);
+
+			if (WSAGetLastError()) {
+				printf("WSA had an error: %d\n", WSAGetLastError());
+			}
 
 			if (s_socket != INVALID_SOCKET) {
-				if (!(iResult = bind(s_socket, result->ai_addr, (int)result->ai_addrlen))) {
+				if (!(iResult = bind(s_socket, ptr->ai_addr, (int)ptr->ai_addrlen))) {
 					break;
 				}
 				else {
@@ -90,6 +104,61 @@ private:
 			return;
 		}
 		socketStatus = UP;
+
+		//for test
+
+		if (iResult = listen(s_socket, SOMAXCONN)) {
+			printf("listen failed with error: %d\n", WSAGetLastError());
+			closesocket(s_socket);
+			WSACleanup();
+			return;
+		}
+
+		SOCKET so = accept(s_socket, NULL, NULL);
+		if (so == INVALID_SOCKET) {
+			printf("accept failed with error: %d\n", WSAGetLastError());
+			closesocket(s_socket);
+			WSACleanup();
+			return;
+		}
+		char recvbuf[1024];
+		int recvbuflen = 1024;
+
+		do {
+			if (iResult = recv(so, recvbuf, recvbuflen, 0)) {
+				printf("Bytes received from client: %d\n", iResult);
+
+				//Echo buffer back to sender
+				int iSendResult;
+				if ((iSendResult = send(so, recvbuf, iResult, 0)) == SOCKET_ERROR) {
+					printf("server send failed with error: %d\n", WSAGetLastError());
+					closesocket(so);
+					WSACleanup();
+					return;
+				}
+				printf("Bytes sent to client: %d\n", iSendResult);
+			}
+			else if (!iResult) {
+				printf("server: connection was closed by client\n");
+			}
+			else {
+				printf("recv failed with error: %d\n", WSAGetLastError());
+				closesocket(so);
+				WSACleanup();
+				return;
+			}
+			
+		} while (iResult > 0);
+
+		if (iResult = shutdown(so, SD_SEND)) {
+			printf("shutdown failed with error: %d\n", WSAGetLastError());
+			closesocket(so);
+			WSACleanup();
+			return;
+		}
+
+		closesocket(so);
+		WSACleanup();
 	}
 };
 
@@ -106,18 +175,24 @@ public:
 	}
 	~ClientSocket() {
 		closesocket(c_socket);
-		WSACleanup();
+		if (clientThread.joinable()) {
+			clientThread.join();
+		}
 	}
 
-	std::thread start() {
-		return std::thread(&ClientSocket::_startClient,this, ipaddr);
+	void start() {
+		clientThread = std::thread(&ClientSocket::_startClient,this);
 	}
 	
 private:
-	void _startClient(const char* ipaddr) {
+	SOCKET c_socket;
+	WSADATA wsaData;
+	std::thread clientThread;
+	const char* ipaddr;
+
+	void _startClient() {
 		int iResult;
 
-		//Initialize Winsock
 		if (iResult = WSAStartup(MAKEWORD(2, 2), &wsaData)) {
 			printf("WSAStartup failed in client: %d\n", iResult);
 			err = 1;
@@ -147,10 +222,18 @@ private:
 
 		//create socket and connect to server
 		for (ptr = result; ptr != NULL; ptr = ptr->ai_next) {
+
+			if (iResult = WSAStartup(MAKEWORD(2, 2), &wsaData)) {
+				printf("WSAStartup failed in client: %d\n", iResult);
+				err = 1;
+				socketStatus = ERR;
+				return;
+			}
 			c_socket = socket(ptr->ai_family, ptr->ai_socktype, ptr->ai_protocol);
 
 			if (c_socket != INVALID_SOCKET) {
 				if (!(iResult = connect(c_socket, ptr->ai_addr, (int)ptr->ai_addrlen))) {
+					printf("client: connected to server\n");
 					break;
 				}
 				else {
@@ -163,34 +246,61 @@ private:
 		freeaddrinfo(result);
 
 		if (c_socket == INVALID_SOCKET) {
-			printf("client is INVALID_SOCKET in client\n");
+			printf("client failed to connect\n");
 			WSACleanup();
 			err = 1;
 			socketStatus = ERR;
 			return;
 		}
 		socketStatus = UP;
-	}
 
-	SOCKET c_socket;
-	WSADATA wsaData;
-	const char* ipaddr;
+		//test
+		const char* sendbuf = "test message";
+		if ((iResult = send(c_socket, sendbuf, (int)strlen(sendbuf), 0)) == SOCKET_ERROR) {
+			printf("client send failed with error: %d\n", WSAGetLastError());
+			closesocket(c_socket);
+			WSACleanup();
+			return;
+		}
+
+		printf("Bytes sent to server: %ld\n", iResult);
+
+		//shut down connection
+
+		if (iResult = shutdown(c_socket, SD_SEND)) {
+			printf("client shutdown failed with error: %d\n", WSAGetLastError());
+			closesocket(c_socket);
+			WSACleanup();
+			return;
+		}
+
+		char recvbuf[1024];
+		int recvbuflen = 1024;
+		do {
+			if (iResult = recv(c_socket, recvbuf, recvbuflen, 0)) {
+				printf("Bytes received from server: %d\n", iResult);
+			}
+			else if (iResult == 0) {
+				printf("client: connection was closed by server\n");
+			}
+			else {
+				printf("recv failed with error: %d\n", WSAGetLastError());
+			}
+			
+		} while (iResult > 0);
+
+		closesocket(c_socket);
+		WSACleanup();
+	}
 };
 
-
-
-int main(char** arc, int argv) {
-
-	printf("I'm running?\n");
-
+int main() {
 
 	ServerSocket ss;
 	ClientSocket cs("localhost");
 
 	ss.start();
-	//cs.start();
-
-	printf("DONE\n");
+	cs.start();
 
 	return 0;
 }
