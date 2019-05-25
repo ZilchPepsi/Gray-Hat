@@ -1,4 +1,5 @@
-#pragma once
+#ifndef NETWORK_CONSTANTS
+#define NETWORK_CONSTANTS
 
 #define PORT "10004"
 #define MAX_CLIENTS 3
@@ -13,3 +14,5 @@
 #define ERR 2
 
 #define SERVER_FULL 3
+
+#endif

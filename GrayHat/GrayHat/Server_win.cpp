@@ -16,7 +16,7 @@ Server::Server()
 Server::~Server()
 {
 	closesocket(s_socket);
-	for (struct Client* c : clients) {
+	for (struct Client_s* c : clients) {
 		closesocket(*c->socket);
 		delete c->lock;
 		delete c;
@@ -39,7 +39,8 @@ void Server::start() {
 	main server thread
 */
 void Server::_startServer() {
-	printf("in _startServer\n");
+
+	printf("Server initializing\n");
 	int iResult;
 	if (iResult = WSAStartup(MAKEWORD(2, 2), &wsaData)) {
 		printf("WSAStartup failed in server: %d\n", iResult);
@@ -112,72 +113,78 @@ void Server::_startServer() {
 		clientMutex.lock();
 		for (int clientPos = 0; clientPos < clientsSize; clientPos++) {
 
-			clients[clientPos]->lock->lock;
+			clients[clientPos]->lock->lock();
 
-			if (setsockopt(*clients[clientPos]->socket, SOL_SOCKET, SO_RCVTIMEO, (char*)&recv_timeout, sizeof(recv_timeout)) < 0) {
-				printf("setsockopt rcv_timeout failed: %d\n", WSAGetLastError());
-				closesocket(*clients[clientPos]->socket);
-				WSACleanup();
-				return;
+			if ((iResult = recv(*clients[clientPos]->socket, recvbuf, recvbuflen, 0))>0) {
+					printf("recieved bytes from client: %d\n", iResult);
+					//TODO do something with received bytes from client				
 			}
-			if (setsockopt(*clients[clientPos]->socket, SOL_SOCKET, SO_SNDTIMEO, (char*)&send_timeout, sizeof(send_timeout)) < 0) {
-				printf("setsockopt snd_timeout failed: %d\n", WSAGetLastError());
-				closesocket(*clients[clientPos]->socket);
-				WSACleanup();
-				return;
-			}
-
-			do {
-				if (iResult = recv(*clients[clientPos]->socket, recvbuf, recvbuflen, 0)) {
-					printf("Bytes received from client: %d\n", iResult);
-				
-					//TODO do something with received bytes from client
-				}
-				else if (!iResult) {
-					printf("server: connection was closed by client\n");
-					closesocket(*clients[clientPos]->socket);
+			else if (!iResult) {
+				printf("server: connection was closed by client\n");
+				removeClient(clientPos);
+				clientPos--;
 					
-				}
-				else {
-					printf("recv failed with error: %d\n", WSAGetLastError());
-					closesocket(*clients[clientPos]->socket);
-					WSACleanup();
-					return;
-				}
-							
-			} while (iResult > 0);
+			}
+			else if (WSAGetLastError() != 10060) {
+				printf("server receive failed with error: %d\n", WSAGetLastError());
+				removeClient(clientPos);
+				clientPos--;
+			}
 
-
-			clients[clientPos]->lock->unlock();
+			if(clients[clientPos])
+				clients[clientPos]->lock->unlock();
 		}
 		clientMutex.unlock();
 		std::this_thread::sleep_for(std::chrono::milliseconds(SLEEP_TIME));
 	}
-
 }
+
+int Server::removeClient(int clientPos) {
+
+	delete clients[clientPos];
+	for (int x = clientPos + 1; x < clientsSize; x++) {
+		clients[x - 1] = clients[x];
+	}
+	clients[clientsSize - 1] = NULL;
+	clientsSize--;
+
+	return 0;
+}
+
 
 /*
 	listener thread
 */
 void Server::_listen() {
+	printf("server listening for connections...\n");
 	while (status == OK) {
-		printf("in loop...");
 		SOCKET so = accept(s_socket, NULL, NULL);
 		if (so == INVALID_SOCKET) {
 			printf("accept failed with error: %d\n", WSAGetLastError());
-			closesocket(s_socket);
-			WSACleanup();
-			return;
+			closesocket(so);
+			continue;
 		}
-		printf("exiting accept");
+		printf("server got a connection\n");
+
+		if (setsockopt(so, SOL_SOCKET, SO_RCVTIMEO, (char*)&recv_timeout, sizeof(recv_timeout)) < 0) {
+			printf("setsockopt rcv_timeout failed: %d\n", WSAGetLastError());
+			closesocket(so);
+			continue;
+		}
+		if (setsockopt(so, SOL_SOCKET, SO_SNDTIMEO, (char*)&send_timeout, sizeof(send_timeout)) < 0) {
+			printf("setsockopt snd_timeout failed: %d\n", WSAGetLastError());
+			closesocket(so);
+			continue;
+		}
 
 		clientMutex.lock();
 		if (clientsSize == MAX_CLIENTS) {
-			byte message[]{ SERVER_FULL };
+			clientMutex.unlock();
+			char message[]{ SERVER_FULL };
 			sendBytes(&so, message, 1);
 		}
 		else {
-			clients[clientsSize] = new struct Client(&so, new std::mutex);
+			clients[clientsSize] = new struct Client_s(&so, new std::mutex);
 			clientsSize++;
 		}
 		clientMutex.unlock();
@@ -185,8 +192,18 @@ void Server::_listen() {
 }
 
 
-int Server::sendBytes(const SOCKET* client, const byte* const bytes, int size) const{
-	return -1;
+int Server::sendBytes(struct Client_s* client, const char* const bytes, int size) const{
+	return sendBytes(client->socket, bytes, size);
+}
+
+int Server::sendBytes(SOCKET* client, const char* const bytes, int size) const {
+	int iSendResult;
+	if ((iSendResult = send(*client, bytes, size, 0)) == SOCKET_ERROR) {
+		printf("server send failed with error: %d\n", WSAGetLastError());
+		return WSAGetLastError();
+	}
+	printf("Bytes sent to client: %d\n", iSendResult);
+	return 0;
 }
 
 int Server::getStatus() {

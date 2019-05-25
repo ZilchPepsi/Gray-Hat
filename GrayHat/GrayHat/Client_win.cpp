@@ -31,6 +31,7 @@ void Client::start() {
 }
 
 void Client::_startClient() {
+	printf("client initializing\n");
 		int iResult;
 
 		if (iResult = WSAStartup(MAKEWORD(2, 2), &wsaData)) {
@@ -48,7 +49,6 @@ void Client::_startClient() {
 		hints.ai_socktype = SOCK_STREAM;
 		hints.ai_protocol = IPPROTO_TCP;
 
-		//Resolve server address and port
 		if (iResult = getaddrinfo(ipaddr, PORT, &hints, &result)) {
 			printf("getaddrinfo failed in client: %d\n", iResult);
 			WSACleanup();
@@ -69,7 +69,6 @@ void Client::_startClient() {
 
 			if (c_socket != INVALID_SOCKET) {
 				if (!(iResult = connect(c_socket, ptr->ai_addr, (int)ptr->ai_addrlen))) {
-					printf("client: connected to server\n");
 					break;
 				}
 				else {
@@ -87,50 +86,53 @@ void Client::_startClient() {
 			status = ERR;
 			return;
 		}
-		status = OK;
 
 
-		while (status == OK) {
-			
-			if (iResult = recv(c_socket, recvbuf, recvbuflen, 0)) {
-				printf("Bytes received from server: %d\n", iResult);
-			}
-			else if (iResult == 0) {
-				printf("client: connection was closed by server\n");
-				status = DOWN;
-				shutdown(c_socket, SD_SEND);
-			}
-			else {
-				printf("recv failed with error: %d\n", WSAGetLastError());
-				status = ERR;
-			}
+		if (setsockopt(c_socket, SOL_SOCKET, SO_RCVTIMEO, (char*)&recv_timeout, sizeof(recv_timeout)) < 0) {
+			printf("setsockopt rcv_timeout failed: %d\n", WSAGetLastError());
+			closesocket(c_socket);
+			WSACleanup();
+			return;
+		}
+		if (setsockopt(c_socket, SOL_SOCKET, SO_SNDTIMEO, (char*)&send_timeout, sizeof(send_timeout)) < 0) {
+			printf("setsockopt snd_timeout failed: %d\n", WSAGetLastError());
+			closesocket(c_socket);
+			WSACleanup();
+			return;
 		}
 
-		////test
-		//const char* sendbuf = "test message";
-		//if ((iResult = send(c_socket, sendbuf, (int)strlen(sendbuf), 0)) == SOCKET_ERROR) {
-		//	printf("client send failed with error: %d\n", WSAGetLastError());
-		//	closesocket(c_socket);
-		//	WSACleanup();
-		//	return;
-		//}
+		status = OK;
+		printf("client connected, starting up\n");
 
-		//printf("Bytes sent to server: %ld\n", iResult);
-
-		////shut down connection
-
-		//if (iResult = shutdown(c_socket, SD_SEND)) {
-		//	printf("client shutdown failed with error: %d\n", WSAGetLastError());
-		//	closesocket(c_socket);
-		//	WSACleanup();
-		//	return;
-		//}
-
-		//char recvbuf[1024];
-		//int recvbuflen = 1024;
+		while (status == OK) {
+			socketMutex.lock();
+			if ((iResult = recv(c_socket, recvbuf, recvbuflen, 0))>0) {
+				if (!(iResult == -1 && WSAGetLastError() == 10060)) {
+					printf("recieved bytes from server: %d\n", iResult);
+					//TODO recieved something from server
+				}
+			}
+			else if (!iResult) {
+				printf("client: connection was closed by server\n");
+				status = DOWN;
+			}
+			else if (WSAGetLastError() != 10060) {
+				printf("client receive failed with error: %d\n", WSAGetLastError());
+				status = ERR;
+			}
+			socketMutex.unlock();
+			std::this_thread::sleep_for(std::chrono::milliseconds(SLEEP_TIME));
+		}
 		
 }
 
-int Client::sendBytes(const byte* const bytes, int size) const {
-	return -1;
+int Client::sendBytes(const char* const bytes, int size) const {
+	int iSendResult;
+	printf("client sending %c\n", *bytes);
+	if ((iSendResult = send(c_socket, bytes, size, 0)) == SOCKET_ERROR) {
+		printf("server send failed with error: %d\n", WSAGetLastError());
+		return WSAGetLastError();
+	}
+	printf("Bytes sent to server: %d\n", iSendResult);
+	return 0;
 }

@@ -10,11 +10,11 @@
 
 #pragma comment(lib, "Ws2_32.lib")
 
-struct Client {
+struct Client_s {
 	SOCKET* socket;
 	std::mutex* lock;
-	Client(SOCKET* s, std::mutex* l) :socket(s),lock(l) {}
-	~Client() {
+	Client_s(SOCKET* s, std::mutex* l) :socket(s),lock(l) {}
+	~Client_s() {
 		delete lock;
 		closesocket(*socket);
 	}
@@ -27,11 +27,12 @@ public:
 	~Server();
 
 	void start();
-	int sendBytes(const SOCKET* client, const byte* const bytes, int size) const;
+	int sendBytes(struct Client_s* client, const char* const bytes, int size) const;
+	int sendBytes(SOCKET* client, const char* const bytes, int size) const;
 	int getStatus();
 
 private:
-	struct Client *clients[MAX_CLIENTS];
+	struct Client_s *clients[MAX_CLIENTS];
 	int clientsSize = 0;
 	std::mutex clientMutex;
 
@@ -48,5 +49,6 @@ private:
 
 	void _startServer();
 	void _listen();
+	int removeClient(int);
 };
 

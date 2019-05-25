@@ -8,6 +8,7 @@
 //#define PORT "10004"
 //
 #include "Server_win.h"
+#include "Client_win.h"
 //
 //enum SocketStatus {
 //	DOWN,
@@ -304,10 +305,18 @@ int main() {
 	//ss.start();
 	//cs.start();
 
-	printf("starting server\n");
+	printf("Main: starting server\n");
 
 	Server s;
 	s.start();
+
+	std::this_thread::sleep_for(std::chrono::seconds(5));
+
+	printf("Main: starting client\n");
+	Client c("localhost");
+	c.start();
+
+	system("pause");
 
 	return 0;
 }

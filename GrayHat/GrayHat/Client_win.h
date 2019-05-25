@@ -20,9 +20,8 @@ public:
 	~Client();
 
 	void start();
-	int sendBytes(const byte* const bytes, int size) const;
+	int sendBytes(const char* const bytes, int size) const;
 	int getStatus();
-	void start();
 
 private:
 	char recvbuf[RECVBUF_SIZE];
