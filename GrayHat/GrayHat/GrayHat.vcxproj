@@ -119,6 +119,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="GameEngine.h" />
     <ClInclude Include="GameGraphics.h" />
     <ClInclude Include="KeyboardInput.h" />
     <ClInclude Include="KeyboardInput_win.h" />
@@ -126,9 +127,11 @@
     <ClInclude Include="TerminalGraphics_win.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="GameEngine.cpp" />
     <ClCompile Include="GameGraphics.cpp" />
     <ClCompile Include="KeyboardInput.cpp" />
     <ClCompile Include="KeyboardInput_win.cpp" />
+    <ClCompile Include="main.cpp" />
     <ClCompile Include="TerminalGraphics.cpp" />
     <ClCompile Include="TerminalGraphics_win.cpp" />
     <ClCompile Include="TerminalTest.cpp" />

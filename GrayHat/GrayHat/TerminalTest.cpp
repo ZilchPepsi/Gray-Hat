@@ -36,11 +36,10 @@ void unitTestGraphics()
 
 	system("pause");
 }
-
+/*
 int main()
 {
 	unitTestGraphics();
 	return 0;
-}
-
+}*/
 
