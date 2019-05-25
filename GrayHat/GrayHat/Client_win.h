@@ -7,6 +7,7 @@
 
 #pragma comment(lib, "Ws2_32.lib")
 
+#define PORT "10004"
 
 class Client
 {
