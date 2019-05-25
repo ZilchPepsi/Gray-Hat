@@ -20,19 +20,19 @@ public:
 	~Client();
 
 	void start();
-	int sendBytes(const SOCKET* client, const byte* const bytes, int size) const;
+	int sendBytes(const byte* const bytes, int size) const;
 	int getStatus();
 	void start();
 
 private:
 	char recvbuf[RECVBUF_SIZE];
 	int recvbuflen = RECVBUF_SIZE;
-	std::mutex recvMutex;
 	const char* ipaddr;
 
 	struct timeval recv_timeout, send_timeout;
 	volatile int status;
 	SOCKET c_socket;
+	std::mutex socketMutex;
 	WSADATA wsaData;
 	std::thread thread;
 

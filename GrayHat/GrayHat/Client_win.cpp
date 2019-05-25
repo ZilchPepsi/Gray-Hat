@@ -89,45 +89,48 @@ void Client::_startClient() {
 		}
 		status = OK;
 
-		//test
-		const char* sendbuf = "test message";
-		if ((iResult = send(c_socket, sendbuf, (int)strlen(sendbuf), 0)) == SOCKET_ERROR) {
-			printf("client send failed with error: %d\n", WSAGetLastError());
-			closesocket(c_socket);
-			WSACleanup();
-			return;
-		}
 
-		printf("Bytes sent to server: %ld\n", iResult);
-
-		//shut down connection
-
-		if (iResult = shutdown(c_socket, SD_SEND)) {
-			printf("client shutdown failed with error: %d\n", WSAGetLastError());
-			closesocket(c_socket);
-			WSACleanup();
-			return;
-		}
-
-		char recvbuf[1024];
-		int recvbuflen = 1024;
-		do {
+		while (status == OK) {
+			
 			if (iResult = recv(c_socket, recvbuf, recvbuflen, 0)) {
 				printf("Bytes received from server: %d\n", iResult);
 			}
 			else if (iResult == 0) {
 				printf("client: connection was closed by server\n");
+				status = DOWN;
+				shutdown(c_socket, SD_SEND);
 			}
 			else {
 				printf("recv failed with error: %d\n", WSAGetLastError());
+				status = ERR;
 			}
-			
-		} while (iResult > 0);
+		}
 
-		closesocket(c_socket);
-		WSACleanup();
+		////test
+		//const char* sendbuf = "test message";
+		//if ((iResult = send(c_socket, sendbuf, (int)strlen(sendbuf), 0)) == SOCKET_ERROR) {
+		//	printf("client send failed with error: %d\n", WSAGetLastError());
+		//	closesocket(c_socket);
+		//	WSACleanup();
+		//	return;
+		//}
+
+		//printf("Bytes sent to server: %ld\n", iResult);
+
+		////shut down connection
+
+		//if (iResult = shutdown(c_socket, SD_SEND)) {
+		//	printf("client shutdown failed with error: %d\n", WSAGetLastError());
+		//	closesocket(c_socket);
+		//	WSACleanup();
+		//	return;
+		//}
+
+		//char recvbuf[1024];
+		//int recvbuflen = 1024;
+		
 }
 
-int Client::sendBytes(const SOCKET* client, const byte* const bytes, int size) const {
+int Client::sendBytes(const byte* const bytes, int size) const {
 	return -1;
 }
