@@ -1,6 +1,6 @@
 #include "FileSystemFolder.h"
 
-FileSystemFolder::FileSystemFolder() : FileSystemObject("Yo_Change_This_Folder", FileSystemObject::TYPE_FOLDER){}
+FileSystemFolder::FileSystemFolder() : FileSystemObject(DEFAULT_DIR_NAME, TYPE_DIR){}
 
 FileSystemFolder::FileSystemFolder(const std::string str, const int typ) : FileSystemObject(str,typ){}
 
@@ -40,4 +40,16 @@ void FileSystemFolder::addFile(std::string name, int type)
 {
 	FileSystemFile * file = new FileSystemFile(name, type);
 	files.push_back(file);
+}
+
+std::vector<FileSystemObject*>* FileSystemFolder::getContents() {
+	std::vector<FileSystemObject*>* contents = new std::vector<FileSystemObject*>();
+
+	for (std::vector<FileSystemFile*>::iterator it = files.begin(); it != files.end(); it++) {
+		contents->push_back(*it);
+	}
+	for (std::vector<FileSystemFolder*>::iterator it = folders.begin(); it != folders.end(); it++) {
+		contents->push_back(*it);
+	}
+	return contents;
 }

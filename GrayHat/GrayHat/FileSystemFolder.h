@@ -4,6 +4,8 @@
 #include "FileSystemFile.h"
 #include <vector>
 
+#define DEFAULT_DIR_NAME "util"
+
 class FileSystemFolder : public FileSystemObject
 {
 
@@ -16,6 +18,8 @@ class FileSystemFolder : public FileSystemObject
 
 		void addSubFolder(std::string name, int type);
 		void addFile(std::string name, int type);
+
+		std::vector<FileSystemObject*>* getContents();
 
 	private:
 		

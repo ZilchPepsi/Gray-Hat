@@ -1,52 +1,68 @@
 #include "FileSystemObject.h"
 
 
-
-FileSystemObject::FileSystemObject(const std::string str, int typ):name(str),type(typ)
-{
+FileSystemObject::FileSystemObject(const std::string str, int typ) {
+	name = str;
+	name = typ;
 	displayName = str;
 	displayType = typ;
+	height = 1;
+	size = 1;
 }
 
 
-FileSystemObject::~FileSystemObject()
-{
+FileSystemObject::~FileSystemObject() {
 
 }
 
-std::string FileSystemObject::getName()
-{
+std::string FileSystemObject::getName() {
 	return name;
 }
 
-int FileSystemObject::getType()
-{
+int FileSystemObject::getType() {
 	return type;
 }
 
-std::string FileSystemObject::getDisplayName()
-{
-	return name;
+std::string FileSystemObject::getDisplayName() {
+	return displayName;
 }
 
-int FileSystemObject::getDisplayType()
-{
+int FileSystemObject::getDisplayType() {
 	return displayType;
 }
 
-void FileSystemObject::setDisplayName(std::string str)
-{
+void FileSystemObject::setName(std::string str) {
+	name = str;
+}
+void FileSystemObject::setType(int typ) {
+	type = typ;
+}
+
+void FileSystemObject::setDisplayName(std::string str) {
 	displayName = str;
 }
 
-void FileSystemObject::setDisplayType(int typ)
-{
+void FileSystemObject::setDisplayType(int typ) {
 	displayType = typ;
 }
 
-int FileSystemObject::encrypt(int val)
-{
-	if (val == 0)
+int FileSystemObject::encrypt(int val) {
+	if (val <=0)
 		return size;
 	return size / val;
+}
+
+int FileSystemObject::getHeight() {
+	return height;
+}
+
+void FileSystemObject::setHeight(int h){
+	height = h;
+}
+
+int FileSystemObject::getSize() {
+	return size;
+}
+void FileSystemObject::setSize(int s) {
+	size = s;
 }

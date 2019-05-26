@@ -1,26 +1,27 @@
 #pragma once
 
-#include "FileSystemObject.h"
+#include "FileSystemFolder.h"
+
+#define MAX_TREE_HEIGHT 20
+#define MAX_DIRS 3
+#define MAX_CONTENTS 6
+
+#define MIN_TREE_HEIGHT 3
+#define MIN_CONTENTS 2
+
+#define MAX_KEYS 1
 
 class FileSystem
 {
 	public:
-
 		FileSystem();
 		~FileSystem();
 
 		int generateSystem();
 		FileSystemObject* getRoot();
-		int treeSize(FileSystemObject);
+		int treeSize(FileSystemObject*);
 	
 	private:
-		
-		FileSystemObject root;// ("placeholder_name", FileSystemObject::TYPE_ERR);
-
-		const float PROB_SUBFOLDER = 0.1f;
-		const float PROB_FILE_EXE = 0.1f;
-		const float PROB_FILE_KEY = 0.1f;
-		const float PROB_FILE_SYM = 0.1f;
-		const float PROB_FILE_MISC = 0.1f;
+		FileSystemFolder root;
 };
 
