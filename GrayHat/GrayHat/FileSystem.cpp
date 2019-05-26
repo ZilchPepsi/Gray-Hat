@@ -58,7 +58,7 @@ int FileSystem::generateSystem()
 	for (std::vector<FileSystemObject*>::iterator it = contents->begin(); it != contents->end(); it++) {
 		
 		//this is a directory
-		if (dynamic_cast<FileSystemFolder*>(*it)) {
+		if ((*it)->getType() == TYPE_DIR) {
 			dirCount++;
 		}
 		stack.push(*it);
