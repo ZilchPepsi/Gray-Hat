@@ -6,6 +6,8 @@
 #include <chrono>
 #include <stdio.h>
 #include "TerminalGraphics_win.h"
+#include "FileSystemFolder.h"
+#include "FileSystemFile.h"
 
 class GameGraphics
 {
@@ -20,6 +22,7 @@ class GameGraphics
 		void setProgramPercent(std::string program, int percent);
 		void setInputBuffer(std::string text);
 		void addBufferHistory(std::string text);
+		void setCurrentFolder(FileSystemFolder * folder);
 
 		void render();
 		void run();
@@ -32,6 +35,8 @@ class GameGraphics
 		char bufferText[40];
 		//std::string bufferText;
 		std::vector<std::string> bufferHistory;
+
+		FileSystemFolder * curFolder;
 
 		TerminalGraphics_win graphics;
 
@@ -54,5 +59,6 @@ class GameGraphics
 		void drawRunningProgs();
 		void drawBufferText();
 		void drawBufferHist();
+		void drawCurrentFolder();
 };
 
