@@ -65,3 +65,13 @@ int FileSystemObject::getSize() {
 void FileSystemObject::setSize(int s) {
 	size = s;
 }
+
+FileSystemObject* FileSystemObject::getParent() {
+	return parent;
+}
+
+void FileSystemObject::setParent(FileSystemObject* f) {
+	parent = f;
+}
+
+

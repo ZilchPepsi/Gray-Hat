@@ -33,12 +33,14 @@ int FileSystemFolder::encrypt(int val)
 void FileSystemFolder::addSubFolder(std::string name, int type)
 {
 	FileSystemFolder * folder = new FileSystemFolder(name, type);
+	folder->setParent(this);
 	folders.push_back(folder);
 }
 
 void FileSystemFolder::addFile(std::string name, int type)
 {
 	FileSystemFile * file = new FileSystemFile(name, type);
+	file->setParent(this);
 	files.push_back(file);
 }
 

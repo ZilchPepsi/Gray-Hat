@@ -26,6 +26,7 @@ public:
 	virtual int getHeight();
 	virtual int getSize();
 
+	virtual FileSystemObject* getParent();
 
 	virtual void setName(std::string);
 	virtual void setType(int);
@@ -34,10 +35,13 @@ public:
 	virtual void setHeight(int);
 	virtual void setSize(int);
 
+	virtual void setParent(FileSystemObject*);
+
 	virtual int encrypt(int val);
 
 protected:
 	Logger logger;
+
 	std::string name;
 	int type;
 	std::string displayName;
@@ -45,5 +49,7 @@ protected:
 	int encryption;
 	int size;
 	int height;
+
+	FileSystemObject* parent;
 };
 
