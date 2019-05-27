@@ -3,6 +3,7 @@
 #include <fstream>
 #include <vector>
 #include <map>
+#include <mutex>
 
 
 class Logger
@@ -19,13 +20,18 @@ private:
 	struct FILE {
 		std::ofstream* file;
 		std::string name;
-		FILE(std::ofstream* f, std::string n):file(f),name(n){}
-		~FILE() {delete file;}
+		std::mutex* lock;
+		FILE(std::ofstream* f, std::string n):file(f),name(n){
+			lock = new std::mutex();
+		}
+		~FILE() { delete file; delete lock; }
 	};
 
 
 	static std::vector<struct FILE*> files;
 	static std::map<struct FILE*, int> instances;
+
+	std::mutex lock;
 
 	struct FILE* file;
 	struct FILE* contains(const char*);

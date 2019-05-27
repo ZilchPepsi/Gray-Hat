@@ -12,6 +12,7 @@ std::map<struct Logger::FILE*, int> Logger::instances = std::map<struct Logger::
 
 Logger::Logger(const char* fileName)
 {
+	lock.lock();
 	if (file = contains(fileName)) {
 		instances[file]++;
 	}
@@ -19,9 +20,11 @@ Logger::Logger(const char* fileName)
 		file = new struct FILE(new std::ofstream(std::string(fileName)+".log", std::ofstream::out), std::string(fileName));
 		instances[file] = 1;
 	}
+	lock.unlock();
 }
 Logger::~Logger()
 {
+	lock.lock();
 	instances[file]--;
 	if (!instances[file])
 	{
@@ -33,9 +36,9 @@ Logger::~Logger()
 			}
 		}
 		instances.erase(file);
-
 		delete file;
 	}
+	lock.unlock();
 }
 
 struct Logger::FILE* Logger::contains(const char* fileName) {
@@ -53,6 +56,7 @@ void Logger::log(std::string str) {
 
 void Logger::log(const char* str) {
 
+	file->lock->lock();
 	std::time_t endTime = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
 	char* time = std::ctime(&endTime);
 	char* temp = time;
@@ -62,4 +66,5 @@ void Logger::log(const char* str) {
 	*temp = '\0';
 
 	(*file->file) << time << ": "<< str << std::endl;
+	file->lock->unlock();
 }
