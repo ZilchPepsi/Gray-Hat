@@ -87,7 +87,7 @@ void KeyboardInput_win::moveCursor(int dir)
 	cursorPos += dir;
 
 	if (cursorPos > buffer.length())
-		cursorPos = buffer.length();
+		cursorPos = (int)buffer.length();
 	if (cursorPos < 0)
 		cursorPos = 0;
 }
