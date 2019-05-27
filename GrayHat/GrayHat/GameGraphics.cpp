@@ -22,6 +22,8 @@ void GameGraphics::init()
 	running = true;
 	editing = false;
 
+	curFolder = NULL;
+
 	//graphics.writeText(retval, 0, 0);
 	renderer = std::thread(&GameGraphics::run,this); // start rendering thread
 }
@@ -34,7 +36,7 @@ void GameGraphics::run()
 	{
 		if(!editing)
 			render();
-		std::this_thread::sleep_for(std::chrono::milliseconds(10)); // don't overwhelm this thread
+		std::this_thread::sleep_for(std::chrono::milliseconds(15)); // don't overwhelm this thread
 	}
 }
 
@@ -49,6 +51,7 @@ void GameGraphics::render()
 	drawPartitionLine();
 	drawRunningProgs();
 	drawBufferHist();
+	drawCurrentFolder();
 	drawBufferText();
 
 	graphics.setCursorVisible(true);
@@ -109,6 +112,26 @@ void GameGraphics::drawBufferHist()
 	}
 }
 
+void GameGraphics::drawCurrentFolder()
+{
+	graphics.writeText("Current directory:", 0, (CHAR_WIDTH / 2) + 1, TerminalGraphics::CC_FORE_WHT);
+	
+	if (curFolder != NULL)
+	{
+		char line[40];
+		sprintf_s(line, "%-30s", curFolder->getName().c_str());
+		graphics.writeText(line, 1, (CHAR_WIDTH / 2) + 1, TerminalGraphics::CC_FORE_MAG);
+
+		std::vector<FileSystemObject *> * contents = curFolder->getContents();
+		for (int i = 0; i < contents->size(); i++)
+		{
+			sprintf_s(line, "%-30s", contents->at(i)->getName());
+			graphics.writeText(line, 1, (CHAR_WIDTH / 2) + 1, TerminalGraphics::CC_FORE_GRN);
+
+		}
+	}
+}
+
 void GameGraphics::setProgramPercent(std::string program, int percent)
 {
 	editing = true;
@@ -138,4 +161,9 @@ void GameGraphics::addBufferHistory(std::string text)
 		bufferHistory.erase(bufferHistory.begin());
 	}
 	editing = false;
+}
+
+void GameGraphics::setCurrentFolder(FileSystemFolder * folder)
+{
+	curFolder = folder;
 }

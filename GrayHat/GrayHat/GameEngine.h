@@ -2,7 +2,7 @@
 
 #include "GameGraphics.h"
 #include "KeyboardInput_win.h"
-//#include "Player.h"
+#include "Player.h"
 #include "FileSystem.h"
 #include <string>
 #include <vector>
@@ -17,13 +17,14 @@ class GameEngine
 		int init();
 		int update();
 		int mainLoop();
+		void executeCommand(std::string command);
 
 	private:
 		
 		GameGraphics gg;
 		KeyboardInput_win ki;
 		FileSystem fs;
-		//std::vector<Player> players;
+		Player player;
 		
 		bool running;
 		std::string currentBuffer;

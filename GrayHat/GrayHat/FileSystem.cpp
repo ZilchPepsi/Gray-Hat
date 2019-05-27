@@ -6,7 +6,6 @@
 #include <stack>
 
 
-
 FileSystem::FileSystem() : root("root", TYPE_DIR)
 {
 	
@@ -138,7 +137,7 @@ int FileSystem::generateSystem()
 	return 0;
 }
 
-FileSystemObject* FileSystem::getRoot()
+FileSystemFolder* FileSystem::getRoot()
 {
 	return &root;
 }

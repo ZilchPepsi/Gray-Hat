@@ -7,7 +7,6 @@ GameEngine::GameEngine()
 	init();
 }
 
-
 GameEngine::~GameEngine(){}
 
 int GameEngine::init()
@@ -22,6 +21,8 @@ int GameEngine::init()
 
 	// init FileSystem
 	fs.generateSystem();
+
+	player.setLocation(fs.getRoot());
 
 	return 0;
 }
@@ -40,7 +41,16 @@ int GameEngine::update()
 	//add prev buffers
 	std::string prevBuffer = ki.popBufferQueue();
 	if (prevBuffer != "")
+	{
 		gg.addBufferHistory(prevBuffer);
+		player.addPrevCommand(prevBuffer);
+		
+		// Execute command
+		executeCommand(prevBuffer);
+	}
+
+	// update current directory information
+	gg.setCurrentFolder(player.getLocation());
 
 	return 0;
 }
@@ -55,4 +65,9 @@ int GameEngine::mainLoop()
 	}
 
 	return 0;
+}
+
+void GameEngine::executeCommand(std::string command)
+{
+	// TODO
 }
