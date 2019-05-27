@@ -7,6 +7,12 @@
 #include <string>
 #include <vector>
 #include <chrono>
+#include <algorithm>
+#include <locale>
+
+#define CMD_MOVE "cd"
+#define CMD_ENCRYPT "encrypt"
+#define CMD_DECRYPT "decrypt"
 
 class GameEngine
 {
@@ -17,7 +23,7 @@ class GameEngine
 		int init();
 		int update();
 		int mainLoop();
-		void executeCommand(std::string command);
+		std::string executeCommand(std::string command);
 
 	private:
 		

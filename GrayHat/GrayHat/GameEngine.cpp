@@ -1,7 +1,5 @@
 #include "GameEngine.h"
 
-
-
 GameEngine::GameEngine() :logger("GameEngine")
 { 
 	init();
@@ -42,11 +40,11 @@ int GameEngine::update()
 	std::string prevBuffer = ki.popBufferQueue();
 	if (prevBuffer != "")
 	{
-		gg.addBufferHistory(prevBuffer);
-		player.addPrevCommand(prevBuffer);
-		
 		// Execute command
-		executeCommand(prevBuffer);
+		std::string retCMD = executeCommand(prevBuffer);
+
+		player.addPrevCommand(prevBuffer);
+		gg.addBufferHistory(retCMD);
 	}
 
 	// update current directory information
@@ -67,7 +65,33 @@ int GameEngine::mainLoop()
 	return 0;
 }
 
-void GameEngine::executeCommand(std::string command)
+std::string GameEngine::executeCommand(std::string command)
 {
 	// TODO
+	//extract lower case string up until 1st white space
+	std::locale loc;
+	std::string cmdLower = "";
+	for (size_t i = 0; i < command.length(); i++)
+		cmdLower += std::tolower(command[i], loc); // convert to lower case
+	std::string commandCode = cmdLower.substr(0, cmdLower.find(' ')); // get string up until 1st whitespace
+
+	if (commandCode == CMD_MOVE)
+	{
+		//get string after 1st whitespace
+		int whtspaceIndex = cmdLower.find(' ') + 1;
+		std::string dirName = cmdLower.substr(whtspaceIndex, cmdLower.length() - whtspaceIndex);
+
+		std::vector<FileSystemObject *> * contents = player.getLocation()->getContents();
+		for (size_t i = 0; i < contents->size(); i++)
+		{
+			if (contents->at(i)->getType() == TYPE_DIR && contents->at(i)->getName() == dirName)
+			{
+				player.setLocation(dynamic_cast<FileSystemFolder*>(contents->at(i)));
+			}
+		}
+		delete contents;
+		
+		return "Directory moved to: " + dirName;
+	}
+	return "Invalid command: " + command;
 }
