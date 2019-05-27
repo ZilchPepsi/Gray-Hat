@@ -114,19 +114,33 @@ void GameGraphics::drawBufferHist()
 
 void GameGraphics::drawCurrentFolder()
 {
-	graphics.writeText("Current directory:", 0, (CHAR_WIDTH / 2) + 1, TerminalGraphics::CC_FORE_WHT);
+	graphics.writeText("Current directory: ", 0, (CHAR_WIDTH / 2) + 1, TerminalGraphics::CC_FORE_CYN);
 	
 	if (curFolder != NULL)
 	{
 		char line[40];
-		sprintf_s(line, "%-30s", curFolder->getName().c_str());
+		sprintf_s(line, "-> %-30s", curFolder->getName().c_str());
 		graphics.writeText(line, 2, (CHAR_WIDTH / 2) + 1, TerminalGraphics::CC_FORE_MAG);
+		sprintf_s(line, "%28d", curFolder->getSize());
+		graphics.writeText(line, 2, (CHAR_WIDTH * 3 / 4), TerminalGraphics::CC_FORE_WHT);
+		graphics.writeText("kB", 2, (CHAR_WIDTH * 3 / 4) + 29, TerminalGraphics::CC_FORE_GRN);
 
 		std::vector<FileSystemObject *> * contents = curFolder->getContents();
 		for (int i = 0; i < contents->size(); i++)
 		{
-			sprintf_s(line, "%-30s", contents->at(i)->getName());
+<<<<<<< HEAD
+			int contentColor = TerminalGraphics::CC_FORE_WHT;
+			if (contents->at(i)->getType() == TYPE_DIR)
+				contentColor = TerminalGraphics::CC_FORE_YEL;
+			sprintf_s(line, "\t-> %-30s", contents->at(i)->getName().c_str());
+			graphics.writeText(line, 3 + i, (CHAR_WIDTH / 2) + 1, contentColor);
+			sprintf_s(line, "%28d", contents->at(i)->getSize());
+			graphics.writeText(line, 3 + i, (CHAR_WIDTH * 3 / 4), contentColor);
+			graphics.writeText("kB", 3 + i, (CHAR_WIDTH * 3 / 4) + 29, TerminalGraphics::CC_FORE_GRN);
+=======
+			sprintf_s(line, "%-30s", contents->at(i)->getName().c_str());
 			graphics.writeText(line, 3 + i, (CHAR_WIDTH / 2) + 1, TerminalGraphics::CC_FORE_GRN);
+>>>>>>> 150fd9fad768d86241853fe6677a4b414a93792e
 
 		}
 		delete contents;

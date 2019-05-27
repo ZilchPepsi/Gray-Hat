@@ -4,6 +4,7 @@
 #include <cstdlib>
 #include <algorithm>
 #include <stack>
+#include "NameGenerator.h"
 
 
 FileSystem::FileSystem() : root(std::string("root"), TYPE_DIR), logger("FileSystem"){}
@@ -15,7 +16,9 @@ FileSystem::~FileSystem()
 
 int FileSystem::generateSystem()
 {
-	srand(time(0));
+	srand((unsigned int)time(0));
+	NameGenerator generator;
+	generator.init();
 	
 	//global maxes for this generated map
 	int maxHeight = std::max(rand() % MAX_TREE_HEIGHT + 1, MIN_TREE_HEIGHT);	//max height of tree
@@ -27,7 +30,7 @@ int FileSystem::generateSystem()
 		root.addSubFolder(DEFAULT_DIR_NAME, TYPE_DIR);
 	}
 	for (int x = 0; x < maxContents - maxDirs; x++) {
-		root.addFile(DEFAULT_FILE_NAME, TYPE_FILE_MISC);
+		root.addFile(generator.generateFileName(), TYPE_FILE_MISC);
 	}
 
 	/*
@@ -75,7 +78,7 @@ int FileSystem::generateSystem()
 					fo->addSubFolder(DEFAULT_DIR_NAME, TYPE_DIR);
 				}
 				for (int x = 0; x < maxC - maxD; x++) {
-					fo->addFile(DEFAULT_FILE_NAME, TYPE_FILE_MISC);
+					fo->addFile(generator.generateFileName(), TYPE_FILE_MISC);
 				}
 
 				//set height of all contents in this directory and add to stack
