@@ -50,11 +50,15 @@ void NameGenerator::init() {
 }
 
 std::string NameGenerator::generateFileName() {
-
-	logger.log("returning a name");
-	return prefix[rand() % prefix.size()] + 
-		"_" + 
-		suffix[rand() % suffix.size()] + 
-		extensions[rand() % extensions.size()];
+	if (loaded) {
+		return prefix[rand() % prefix.size()] +
+			"_" +
+			suffix[rand() % suffix.size()] +
+			extensions[rand() % extensions.size()];
+	}
+	else {
+		return NULL;
+	}
+	
 }
 
