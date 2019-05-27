@@ -13,6 +13,7 @@ public:
 
 	void init();
 	std::string generateFileName();
+	std::string generateDirectoryName();
 
 private:
 

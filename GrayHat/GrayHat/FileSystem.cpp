@@ -27,7 +27,7 @@ int FileSystem::generateSystem()
 
 	//populate root directory
 	for (int x = 0; x < maxDirs; x++) {
-		root.addSubFolder(DEFAULT_DIR_NAME, TYPE_DIR);
+		root.addSubFolder(generator.generateDirectoryName(), TYPE_DIR);
 	}
 	for (int x = 0; x < maxContents - maxDirs; x++) {
 		root.addFile(generator.generateFileName(), TYPE_FILE_MISC);
@@ -75,7 +75,7 @@ int FileSystem::generateSystem()
 
 				//populate directory
 				for (int x = 0; x < maxD; x++) {
-					fo->addSubFolder(DEFAULT_DIR_NAME, TYPE_DIR);
+					fo->addSubFolder(generator.generateDirectoryName(), TYPE_DIR);
 				}
 				for (int x = 0; x < maxC - maxD; x++) {
 					fo->addFile(generator.generateFileName(), TYPE_FILE_MISC);

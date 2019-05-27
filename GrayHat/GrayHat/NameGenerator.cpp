@@ -59,6 +59,14 @@ std::string NameGenerator::generateFileName() {
 	else {
 		return NULL;
 	}
-	
+}
+
+std::string NameGenerator::generateDirectoryName() {
+	if (loaded) {
+		return suffix[rand() % suffix.size()];
+	}
+	else {
+		return NULL;
+	}
 }
 
