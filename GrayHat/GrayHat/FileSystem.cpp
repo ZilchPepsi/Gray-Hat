@@ -24,7 +24,7 @@ int FileSystem::generateSystem()
 	//global maxes for this generated map
 	int maxHeight = std::max(rand() % MAX_TREE_HEIGHT + 1, MIN_TREE_HEIGHT);	//max height of tree
 	int maxContents = std::max(rand() % MAX_CONTENTS + 1, MIN_CONTENTS);		//max number of items in a directory
-	int maxDirs = std::min( rand() % MAX_DIRS , maxContents-1);					//max directories in a directory
+	int maxDirs = std::min( rand() % MAX_DIRS+1 , maxContents-1);					//max directories in a directory
 
 	//populate root directory
 	for (int x = 0; x < maxDirs; x++) {
@@ -134,6 +134,7 @@ int FileSystem::generateSystem()
 
 	//links symbolic links, chooses exe to use
 	//TODO fill out exe's and symlinks
+
 	return 0;
 }
 
