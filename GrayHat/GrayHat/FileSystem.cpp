@@ -104,11 +104,15 @@ int FileSystem::generateSystem()
 						//this is the branch that is supposed to contain the obj file
 						if (dirCount == objBranch && !objectivePlaced) {
 							fi->setType(TYPE_FILE_OBJ);
+							fi->setName(DEFAULT_OBJ_NAME);
+							fi->setDisplayName(DEFAULT_OBJ_NAME);
 							objectivePlaced = true;
 							placed = true;
 						}
 						else if(dirCount == keyBranch && !keyPlaced) {
 							fi->setType(TYPE_FILE_KEY);
+							fi->setName(DEFAULT_KEY_NAME);
+							fi->setDisplayName(DEFAULT_KEY_NAME);
 							keyPlaced = true;
 							placed = true;
 						}
