@@ -77,6 +77,7 @@ std::string GameEngine::executeCommand(std::string command)
 
 	if (commandCode == CMD_MOVE)
 	{
+		bool moved = false;
 		//get string after 1st whitespace
 		int whtspaceIndex = cmdLower.find(' ') + 1;
 		std::string dirName = cmdLower.substr(whtspaceIndex, cmdLower.length() - whtspaceIndex);
@@ -87,11 +88,13 @@ std::string GameEngine::executeCommand(std::string command)
 			if (contents->at(i)->getType() == TYPE_DIR && contents->at(i)->getName() == dirName)
 			{
 				player.setLocation(dynamic_cast<FileSystemFolder*>(contents->at(i)));
+				moved = true;
 			}
 		}
 		delete contents;
-		
-		return "Directory moved to: " + dirName;
+		if(moved)
+			return "Directory moved to: " + dirName;
+		return "Invalid directory: " + dirName;
 	}
 	return "Invalid command: " + command;
 }
