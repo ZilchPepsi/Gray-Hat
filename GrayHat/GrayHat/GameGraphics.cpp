@@ -122,14 +122,14 @@ void GameGraphics::drawCurrentFolder()
 		sprintf_s(line, "%-30s", curFolder->getName().c_str());
 		graphics.writeText(line, 2, (CHAR_WIDTH / 2) + 1, TerminalGraphics::CC_FORE_MAG);
 
-		/*std::vector<FileSystemObject *> * contents = curFolder->getContents();
+		std::vector<FileSystemObject *> * contents = curFolder->getContents();
 		for (int i = 0; i < contents->size(); i++)
 		{
 			sprintf_s(line, "%-30s", contents->at(i)->getName());
-			graphics.writeText(line, 1, (CHAR_WIDTH / 2) + 1, TerminalGraphics::CC_FORE_GRN);
+			graphics.writeText(line, 3 + i, (CHAR_WIDTH / 2) + 1, TerminalGraphics::CC_FORE_GRN);
 
 		}
-		delete contents;*/
+		delete contents;
 	}
 }
 
