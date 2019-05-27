@@ -2,7 +2,7 @@
 
 
 
-GameEngine::GameEngine()
+GameEngine::GameEngine() :logger("GameEngine")
 { 
 	init();
 }

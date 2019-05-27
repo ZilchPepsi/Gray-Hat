@@ -21,6 +21,8 @@ class GameEngine
 
 	private:
 		
+		Logger logger;
+
 		GameGraphics gg;
 		KeyboardInput_win ki;
 		FileSystem fs;

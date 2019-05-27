@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include "Logger.h"
 
 #define TYPE_ERR -1
 #define TYPE_DEVICE 0
@@ -15,7 +16,7 @@
 class FileSystemObject
 {
 public:
-	FileSystemObject(const std::string str, int typ);
+	FileSystemObject(std::string str, int typ);
 	virtual ~FileSystemObject();
 
 	virtual std::string getName();
@@ -35,8 +36,8 @@ public:
 
 	virtual int encrypt(int val);
 
-
 protected:
+	Logger logger;
 	std::string name;
 	int type;
 	std::string displayName;

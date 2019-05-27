@@ -1,9 +1,8 @@
 #include "FileSystemObject.h"
 
-
-FileSystemObject::FileSystemObject(const std::string str, int typ) {
+FileSystemObject::FileSystemObject(std::string str, int typ):logger("FileSystemObject") {
 	name = str;
-	name = typ;
+	type = typ;
 	displayName = str;
 	displayType = typ;
 	height = 1;

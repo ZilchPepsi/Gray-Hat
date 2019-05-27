@@ -19,6 +19,7 @@ Logger::Logger(const char* fileName)
 	else {
 		file = new struct FILE(new std::ofstream(std::string(fileName)+".log", std::ofstream::out), std::string(fileName));
 		instances[file] = 1;
+		files.push_back(file);
 	}
 	lock.unlock();
 }

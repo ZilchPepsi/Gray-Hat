@@ -1,6 +1,6 @@
 #include "GameGraphics.h"
 
-GameGraphics::GameGraphics()
+GameGraphics::GameGraphics() :logger("GameGraphics")
 {
 	init();
 }
@@ -120,7 +120,7 @@ void GameGraphics::drawCurrentFolder()
 	{
 		char line[40];
 		sprintf_s(line, "%-30s", curFolder->getName().c_str());
-		graphics.writeText(line, 1, (CHAR_WIDTH / 2) + 1, TerminalGraphics::CC_FORE_MAG);
+		graphics.writeText(line, 2, (CHAR_WIDTH / 2) + 1, TerminalGraphics::CC_FORE_MAG);
 
 		std::vector<FileSystemObject *> * contents = curFolder->getContents();
 		for (int i = 0; i < contents->size(); i++)
@@ -129,6 +129,7 @@ void GameGraphics::drawCurrentFolder()
 			graphics.writeText(line, 1, (CHAR_WIDTH / 2) + 1, TerminalGraphics::CC_FORE_GRN);
 
 		}
+		delete contents;
 	}
 }
 

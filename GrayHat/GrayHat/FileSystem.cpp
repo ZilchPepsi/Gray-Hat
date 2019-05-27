@@ -6,10 +6,7 @@
 #include <stack>
 
 
-FileSystem::FileSystem() : root("root", TYPE_DIR)
-{
-	
-}
+FileSystem::FileSystem() : root(std::string("root"), TYPE_DIR), logger("FileSystem"){}
 
 
 FileSystem::~FileSystem()
@@ -139,6 +136,7 @@ int FileSystem::generateSystem()
 
 FileSystemFolder* FileSystem::getRoot()
 {
+	logger.log(std::string("returning root with name ") + root.getName());
 	return &root;
 }
 

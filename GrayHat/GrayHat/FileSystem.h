@@ -1,6 +1,7 @@
 #pragma once
 
 #include "FileSystemFolder.h"
+#include "Logger.h"
 
 #define MAX_TREE_HEIGHT 20
 #define MAX_DIRS 3
@@ -23,5 +24,7 @@ class FileSystem
 	
 	private:
 		FileSystemFolder root;
+
+		Logger logger;
 };
 

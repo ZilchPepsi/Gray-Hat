@@ -2,7 +2,7 @@
 
 FileSystemFolder::FileSystemFolder() : FileSystemObject(DEFAULT_DIR_NAME, TYPE_DIR){}
 
-FileSystemFolder::FileSystemFolder(const std::string str, const int typ) : FileSystemObject(str,typ){}
+FileSystemFolder::FileSystemFolder(const std::string str, int typ) : FileSystemObject(str,typ){}
 
 FileSystemFolder::~FileSystemFolder()
 {

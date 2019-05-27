@@ -8,6 +8,7 @@
 #include "TerminalGraphics_win.h"
 #include "FileSystemFolder.h"
 #include "FileSystemFile.h"
+#include "Logger.h"
 
 class GameGraphics
 {
@@ -28,7 +29,10 @@ class GameGraphics
 		void run();
 
 	private:
-		
+
+		//logger
+		Logger logger;
+
 		std::vector<std::string> curProgNames;
 		std::vector<int> curProgPercent;
 
