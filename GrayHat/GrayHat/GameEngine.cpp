@@ -32,7 +32,7 @@ int GameEngine::update()
 	gg.setProgramPercent("test_multithreading", testVar % 100);
 	testVar++;
 
-	std::this_thread::sleep_for(std::chrono::milliseconds(100));
+	//std::this_thread::sleep_for(std::chrono::milliseconds(100));
 
 	//test keyboard input
 	currentBuffer = ki.getInputBuffer();
