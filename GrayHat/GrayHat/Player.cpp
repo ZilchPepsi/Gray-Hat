@@ -26,12 +26,12 @@ void Player::addPrevCommand(std::string command)
 
 int Player::getInventorySize()
 {
-	return inventory.size();
+	return (int)inventory.size();
 }
 
 int Player::getPrevCommandsSize()
 {
-	return prevCommands.size();
+	return (int)prevCommands.size();
 }
 
 std::string Player::getPrevCommand(int index)

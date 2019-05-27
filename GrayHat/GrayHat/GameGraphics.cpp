@@ -104,7 +104,7 @@ void GameGraphics::drawBufferHist()
 {
 	char bufferStr[40];
 	int histRow = 1;
-	for (int i = bufferHistory.size() - 1; i >= 0; i--)
+	for (int i = (int)bufferHistory.size() - 1; i >= 0; i--)
 	{
 		sprintf_s(bufferStr, "%-37s", bufferHistory[i].c_str());;
 		graphics.writeText(bufferStr, CHAR_HEIGHT - 1 - histRow, (CHAR_WIDTH / 2) + 1, TerminalGraphics::CC_DEFAULT);
