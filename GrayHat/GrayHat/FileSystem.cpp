@@ -29,7 +29,7 @@ int FileSystem::generateSystem()
 	//global maxes for this generated map
 	int maxHeight = std::max(rand() % MAX_TREE_HEIGHT + 1, MIN_TREE_HEIGHT);	//max height of tree
 	int maxContents = std::max(rand() % MAX_CONTENTS + 1, MIN_CONTENTS);		//max number of items in a directory
-	int maxDirs = std::max( rand() % maxContents , MIN_DIRS);					//max directories in a directory
+	int maxDirs = std::max( rand() % maxContents, MIN_DIRS);					//max directories in a directory
 
 	logger.log("max height: " + logger.itoa(maxHeight));
 	logger.log("max contents: " + logger.itoa(maxContents));
@@ -37,10 +37,10 @@ int FileSystem::generateSystem()
 
 
 	//populate root directory
-	for (int x = 0; x < maxDirs; x++) {
+	for (int x = 0; x < std::max(maxDirs, MIN_ROOT_DIRS); x++) {
 		root.addSubFolder(generator.generateDirectoryName(), TYPE_DIR);
 	}
-	for (int x = 0; x < maxContents - maxDirs; x++) {
+	for (int x = 0; x < maxContents - std::max(maxDirs, MIN_ROOT_DIRS); x++) {
 		root.addFile(generator.generateFileName(), TYPE_FILE_MISC);
 	}
 

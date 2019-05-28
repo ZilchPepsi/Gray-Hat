@@ -5,11 +5,12 @@
 
 #define MAX_TREE_HEIGHT 20
 #define MAX_DIRS 3
-#define MAX_CONTENTS 6
+#define MAX_CONTENTS 10
 
-#define MIN_TREE_HEIGHT 3
-#define MIN_CONTENTS 2
+#define MIN_TREE_HEIGHT 5
+#define MIN_CONTENTS 3
 #define MIN_DIRS 1
+#define MIN_ROOT_DIRS 2
 
 #define MAX_KEYS 1
 
