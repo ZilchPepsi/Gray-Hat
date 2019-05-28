@@ -8,8 +8,11 @@
 #include <cstdarg>
 
 
-std::vector<struct Logger::FILE*> Logger::files = std::vector<struct Logger::FILE*>();
-std::map<struct Logger::FILE*, int> Logger::instances = std::map<struct Logger::FILE*, int>();
+std::vector<struct Logger::FILE*> Logger::files;
+std::map<struct Logger::FILE*, int> Logger::instances;
+
+
+std::mutex Logger::lock;
 
 Logger::Logger(const char* fileName)
 {
