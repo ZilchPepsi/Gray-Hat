@@ -32,8 +32,13 @@ int FileSystemFolder::encrypt(int val)
 
 void FileSystemFolder::addSubFolder(std::string name, int type)
 {
+	static int count = 0;
 	FileSystemFolder * folder = new FileSystemFolder(name, type);
 	folder->setParent(this);
+	char buff[10];
+	_itoa_s(count, buff, 10);
+	folder->setName(folder->getName() + buff);
+	folder->setDisplayName(folder->getName());
 	folders.push_back(folder);
 }
 

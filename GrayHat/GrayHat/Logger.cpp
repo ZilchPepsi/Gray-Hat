@@ -5,6 +5,7 @@
 #include <ctime>
 #include <chrono>
 #include <time.h>
+#include <cstdarg>
 
 
 std::vector<struct Logger::FILE*> Logger::files = std::vector<struct Logger::FILE*>();
@@ -50,7 +51,6 @@ struct Logger::FILE* Logger::contains(const char* fileName) {
 	}
 	return NULL;
 }
-
 void Logger::log(std::string str) {
 	log(str.c_str());
 }
@@ -67,5 +67,6 @@ void Logger::log(const char* str) {
 	*temp = '\0';
 
 	(*file->file) << time << ": "<< str << std::endl;
+	file->file->flush();
 	file->lock->unlock();
 }
