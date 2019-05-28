@@ -25,6 +25,7 @@ class GameGraphics
 		void setInputBuffer(std::string text);
 		void addBufferHistory(std::string text);
 		void setCurrentFolder(FileSystemFolder * folder);
+		void setCurrentInventory(std::vector<FileSystemFile *> * ptr);
 
 		void render();
 		void run();
@@ -45,6 +46,8 @@ class GameGraphics
 
 		TerminalGraphics_win graphics;
 
+		std::vector<FileSystemFile *> * inventory;
+
 		std::thread renderer;
 		bool running = true, editing = true;
 
@@ -58,6 +61,8 @@ class GameGraphics
 		int curBufferRow = CHAR_HEIGHT - 1;
 		int bufferHistoryRow = curBufferRow - 1;
 		int maxBufferHistLines = 5;
+		int maxInventorySize = 7;
+		int inventoryRow = 12;
 
 		// render helper functions
 		void drawPartitionLine();
@@ -65,5 +70,6 @@ class GameGraphics
 		void drawBufferText();
 		void drawBufferHist();
 		void drawCurrentFolder();
+		void drawInventory();
 };
 

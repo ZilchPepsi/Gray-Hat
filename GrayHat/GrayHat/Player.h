@@ -30,5 +30,7 @@ class Player
 		std::vector<std::string> prevCommands;
 		std::vector<FileSystemFile *> inventory;
 		FileSystemFolder * curLocation;
+
+		static int PLAYER_MAX_INVENTORY;
 };
 

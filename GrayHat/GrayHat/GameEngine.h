@@ -14,6 +14,7 @@
 #define CMD_MOVE "cd"
 #define CMD_ENCRYPT "encrypt"
 #define CMD_DECRYPT "decrypt"
+#define CMD_CPY "cpy"
 
 class GameEngine
 {

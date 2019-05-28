@@ -24,6 +24,8 @@ void GameGraphics::init()
 
 	curFolder = NULL;
 
+	inventory = NULL;
+
 	//graphics.writeText(retval, 0, 0);
 	renderer = std::thread(&GameGraphics::run,this); // start rendering thread
 }
@@ -52,6 +54,7 @@ void GameGraphics::render()
 	drawRunningProgs();
 	drawBufferHist();
 	drawCurrentFolder();
+	drawInventory();
 	drawBufferText();
 
 	graphics.setCursorVisible(true);
@@ -102,11 +105,11 @@ void GameGraphics::drawRunningProgs()
 
 void GameGraphics::drawBufferHist()
 {
-	char bufferStr[40];
+	char bufferStr[62];
 	int histRow = 1;
 	for (int i = (int)bufferHistory.size() - 1; i >= 0; i--)
 	{
-		sprintf_s(bufferStr, "%-37s", bufferHistory[i].c_str());;
+		sprintf_s(bufferStr, "%-60s", bufferHistory[i].c_str());;
 		graphics.writeText(bufferStr, CHAR_HEIGHT - 1 - histRow, (CHAR_WIDTH / 2) + 1, TerminalGraphics::CC_DEFAULT);
 		histRow++;
 	}
@@ -161,6 +164,27 @@ void GameGraphics::drawCurrentFolder()
 	}
 }
 
+void GameGraphics::drawInventory()
+{
+	graphics.writeText("Current Inventory: ", inventoryRow, (CHAR_WIDTH / 2) + 1, TerminalGraphics::CC_FORE_CYN);
+	
+	char line[64];
+
+	for (size_t i = 0; i < maxInventorySize; i++)
+	{
+		if (inventory != NULL && i < inventory->size()) // draw inventory item
+		{
+			sprintf_s(line, "(%d) %-30s", i, inventory->at(i)->getName());
+			graphics.writeText(line, inventoryRow + i, (CHAR_WIDTH / 2) + 1, TerminalGraphics::CC_FORE_MAG);
+		}
+		else // overwrite prev lines / make blank
+		{
+			sprintf_s(line, "%-40s", " ");
+			graphics.writeText(line, inventoryRow + i, (CHAR_WIDTH / 2) + 1, TerminalGraphics::CC_FORE_WHT);
+		}
+	}
+}
+
 void GameGraphics::setProgramPercent(std::string program, int percent)
 {
 	editing = true;
@@ -195,4 +219,9 @@ void GameGraphics::addBufferHistory(std::string text)
 void GameGraphics::setCurrentFolder(FileSystemFolder * folder)
 {
 	curFolder = folder;
+}
+
+void GameGraphics::setCurrentInventory(std::vector<FileSystemFile *> * ptr)
+{
+	inventory = ptr;
 }

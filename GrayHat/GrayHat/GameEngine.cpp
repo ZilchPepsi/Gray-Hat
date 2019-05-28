@@ -116,6 +116,28 @@ std::string GameEngine::executeCommand(std::string command)
 			return "Directory moved to: " + dirName;
 		return "Invalid directory: " + dirName;
 	}
+	else if (commandCode == CMD_CPY)
+	{
+		bool copied = false;
+		//get string after 1st whitespace
+		int whtspaceIndex = cmdLower.find(' ') + 1;
+		std::string filename = cmdLower.substr(whtspaceIndex, cmdLower.length() - whtspaceIndex);
+		
+		std::vector<FileSystemObject *> * contents = player.getLocation()->getContents();
+		for (size_t i = 0; i < contents->size(); i++)
+		{
+			if ((contents->at(i)->getType() == TYPE_FILE_EXE || contents->at(i)->getType() == TYPE_FILE_MISC) && contents->at(i)->getName() == filename)
+			{
+				player.addInventory(dynamic_cast<FileSystemFile*>(contents->at(i)));
+				copied = true;
+			}
+		}
+		delete contents;
+		
+		if (copied)
+			return "File copied to inventory: " + filename;
+		return "File not found: " + filename;
+	}
 	
 	return "Invalid command: " + command;
 }
