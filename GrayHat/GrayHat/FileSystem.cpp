@@ -137,6 +137,7 @@ int FileSystem::generateSystem()
 						}
 						else {
 							fi->setType(TYPE_FILE_SYM);
+							fi->changeExtension(".ln");
 							symlinks.push_back(fi);
 						}
 					}
@@ -152,6 +153,20 @@ int FileSystem::generateSystem()
 	//links all symbolic links
 	for (std::vector<FileSystemFile*>::iterator it = symlinks.begin(); it != symlinks.end(); it++) {
 		int height = rand() % maxHeight;
+		FileSystemFolder* currentSubDir = &root;
+		for (int x = 0; x < height; x++) {
+			if (currentSubDir->getFolders().size() > 0) {
+				int pos = rand() % currentSubDir->getFolders().size();
+				currentSubDir = currentSubDir->getFolders()[pos];
+			}
+			else {
+				break;
+			}
+		}
+		std::vector<FileSystemObject*>* contents = currentSubDir->getContents();
+		int pos = rand() % contents->size();
+		(*it)->setSymLink((*contents)[pos]);
+		delete contents;
 	}
 
 	return 0;

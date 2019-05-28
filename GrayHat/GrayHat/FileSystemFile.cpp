@@ -46,3 +46,9 @@ int FileSystemFile::setExecutable(Executable* e) {
 		return 0;
 	}
 }
+
+void FileSystemFile::changeExtension(std::string ex) {
+	std::string subname = name.substr(0, name.find_last_of("."));
+	name = subname + ex;
+	displayName = subname + ex;
+}

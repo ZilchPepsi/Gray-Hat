@@ -31,6 +31,8 @@ class FileSystemFile : public FileSystemObject
 		Executable* getExecutable();
 		int setExecutable(Executable*);
 	
+		void changeExtension(std::string);
+
 	private:
 		FileSystemObject* symlink;
 		Executable* script;

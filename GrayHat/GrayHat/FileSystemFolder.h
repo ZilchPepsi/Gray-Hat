@@ -20,10 +20,15 @@ class FileSystemFolder : public FileSystemObject
 		void addFile(std::string name, int type);
 
 		std::vector<FileSystemObject*>* getContents();
+		
+		std::vector<FileSystemFolder*> getFolders();
+		std::vector<FileSystemFile*> getFiles();
+
+
 
 	private:
 		
-		std::vector<FileSystemFile *> files;
-		std::vector<FileSystemFolder *> folders;
+		std::vector<FileSystemFile*> files;
+		std::vector<FileSystemFolder*> folders;
 };
 

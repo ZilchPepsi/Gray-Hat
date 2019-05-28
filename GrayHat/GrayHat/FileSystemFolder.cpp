@@ -55,3 +55,11 @@ std::vector<FileSystemObject*>* FileSystemFolder::getContents() {
 	}
 	return contents;
 }
+
+std::vector<FileSystemFolder*> FileSystemFolder::getFolders() {
+	return folders;
+}
+
+std::vector<FileSystemFile*> FileSystemFolder::getFiles() {
+	return files;
+}
