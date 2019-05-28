@@ -15,6 +15,8 @@ public:
 	void log(const char*);
 	void log(std::string);
 
+	std::string itoa(int);
+
 private:
 
 	struct FILE {
@@ -31,7 +33,7 @@ private:
 	static std::vector<struct FILE*> files;
 	static std::map<struct FILE*, int> instances;
 
-	std::mutex lock;
+	static std::mutex lock;
 
 	struct FILE* file;
 	struct FILE* contains(const char*);

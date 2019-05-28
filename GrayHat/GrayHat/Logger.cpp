@@ -8,8 +8,11 @@
 #include <cstdarg>
 
 
-std::vector<struct Logger::FILE*> Logger::files = std::vector<struct Logger::FILE*>();
-std::map<struct Logger::FILE*, int> Logger::instances = std::map<struct Logger::FILE*, int>();
+std::vector<struct Logger::FILE*> Logger::files;
+std::map<struct Logger::FILE*, int> Logger::instances;
+
+
+std::mutex Logger::lock;
 
 Logger::Logger(const char* fileName)
 {
@@ -69,4 +72,12 @@ void Logger::log(const char* str) {
 	(*file->file) << time << ": "<< str << std::endl;
 	file->file->flush();
 	file->lock->unlock();
+}
+
+
+std::string Logger::itoa(int x) {
+	static char buff[10];
+	_itoa_s(x,buff, 10);
+
+	return std::string(buff);
 }
