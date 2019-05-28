@@ -92,6 +92,7 @@ private:
 	const static int KEY_DOWN = 45;
 	const static int KEY_RIGHT = 46;
 	const static int KEY_LEFT = 47;
-	
+	const static int KEY_PER = 48;
+
 };
 

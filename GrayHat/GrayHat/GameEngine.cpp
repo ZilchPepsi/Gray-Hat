@@ -82,16 +82,27 @@ std::string GameEngine::executeCommand(std::string command)
 		int whtspaceIndex = cmdLower.find(' ') + 1;
 		std::string dirName = cmdLower.substr(whtspaceIndex, cmdLower.length() - whtspaceIndex);
 
-		std::vector<FileSystemObject *> * contents = player.getLocation()->getContents();
-		for (size_t i = 0; i < contents->size(); i++)
+		if (dirName == "..")
 		{
-			if (contents->at(i)->getType() == TYPE_DIR && contents->at(i)->getName() == dirName)
+			if (player.getLocation()->getParent() != NULL)
 			{
-				player.setLocation(dynamic_cast<FileSystemFolder*>(contents->at(i)));
+				player.setLocation(dynamic_cast<FileSystemFolder*>(player.getLocation()->getParent()));
 				moved = true;
 			}
 		}
-		delete contents;
+		else
+		{
+			std::vector<FileSystemObject *> * contents = player.getLocation()->getContents();
+			for (size_t i = 0; i < contents->size(); i++)
+			{
+				if (contents->at(i)->getType() == TYPE_DIR && contents->at(i)->getName() == dirName)
+				{
+					player.setLocation(dynamic_cast<FileSystemFolder*>(contents->at(i)));
+					moved = true;
+				}
+			}
+			delete contents;
+		}
 		if(moved)
 			return "Directory moved to: " + dirName;
 		return "Invalid directory: " + dirName;

@@ -96,7 +96,7 @@ void KeyboardInput_win::backspacePressed()
 {
 	if (cursorPos > 0)
 	{
-		buffer = buffer.substr(0, buffer.length() - 2);
+		buffer = buffer.substr(0, buffer.length() - 1);
 		cursorPos--;
 		/*if (cursorPos == 1)
 		{
@@ -171,6 +171,10 @@ void KeyboardInput_win::poll()
 	if (GetKeyState(VK_SPACE) & IS_PRESSED)
 	{
 		curPressed[KEY_SPACE] = true;
+	}
+	if (GetKeyState(VK_OEM_PERIOD) & IS_PRESSED)
+	{
+		curPressed[KEY_PER] = true;
 	}
 
 	// set number curPressed
@@ -391,6 +395,13 @@ void KeyboardInput_win::poll()
 			addToBuffer('(');
 		else
 			addToBuffer('9');
+	}
+	if (curPressed[KEY_PER] && !(prevPressed[KEY_PER]))
+	{
+		if (curPressed[KEY_SHIFT])
+			addToBuffer('>');
+		else
+			addToBuffer('.');
 	}
 
 	// add letters to buffer

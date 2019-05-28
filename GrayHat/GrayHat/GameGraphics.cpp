@@ -125,6 +125,18 @@ void GameGraphics::drawCurrentFolder()
 		graphics.writeText(line, 2, (CHAR_WIDTH * 3 / 4), TerminalGraphics::CC_FORE_WHT);
 		graphics.writeText("kB", 2, (CHAR_WIDTH * 3 / 4) + 29, TerminalGraphics::CC_FORE_GRN);
 
+		int contentsRow = 3;
+
+		if (curFolder->getParent() != NULL)
+		{
+			sprintf_s(line, "\t-> %-30s", "..");
+			graphics.writeText(line, contentsRow, (CHAR_WIDTH / 2) + 1, TerminalGraphics::CC_FORE_YEL);
+			sprintf_s(line, "%28s", "?");
+			graphics.writeText(line, contentsRow, (CHAR_WIDTH * 3 / 4), TerminalGraphics::CC_FORE_YEL);
+			graphics.writeText("kB", contentsRow, (CHAR_WIDTH * 3 / 4) + 29, TerminalGraphics::CC_FORE_GRN);
+			contentsRow++;
+		}
+
 		std::vector<FileSystemObject *> * contents = curFolder->getContents();
 		for (int i = 0; i < contents->size(); i++)
 		{
@@ -132,10 +144,10 @@ void GameGraphics::drawCurrentFolder()
 			if (contents->at(i)->getType() == TYPE_DIR)
 				contentColor = TerminalGraphics::CC_FORE_YEL;
 			sprintf_s(line, "\t-> %-30s", contents->at(i)->getName().c_str());
-			graphics.writeText(line, 3 + i, (CHAR_WIDTH / 2) + 1, contentColor);
+			graphics.writeText(line, contentsRow + i, (CHAR_WIDTH / 2) + 1, contentColor);
 			sprintf_s(line, "%28d", contents->at(i)->getSize());
-			graphics.writeText(line, 3 + i, (CHAR_WIDTH * 3 / 4), contentColor);
-			graphics.writeText("kB", 3 + i, (CHAR_WIDTH * 3 / 4) + 29, TerminalGraphics::CC_FORE_GRN);
+			graphics.writeText(line, contentsRow + i, (CHAR_WIDTH * 3 / 4), contentColor);
+			graphics.writeText("kB", contentsRow + i, (CHAR_WIDTH * 3 / 4) + 29, TerminalGraphics::CC_FORE_GRN);
 		}
 		delete contents;
 	}
