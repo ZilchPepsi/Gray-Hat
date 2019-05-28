@@ -12,6 +12,10 @@
 #define TYPE_FILE_KEY 5
 #define TYPE_FILE_OBJ 6
 
+#define TYPE_ENCRYPT_NONE 0
+#define TYPE_ENCRYPT_RED 1
+#define TYPE_ENCRYPT_BLU 2
+#define TYPE_ENCRYPT_GRN 3
 
 class FileSystemObject
 {

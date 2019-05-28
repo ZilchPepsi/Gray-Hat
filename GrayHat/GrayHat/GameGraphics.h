@@ -9,6 +9,7 @@
 #include "FileSystemFolder.h"
 #include "FileSystemFile.h"
 #include "Logger.h"
+#include "FileSystem.h"
 
 class GameGraphics
 {
