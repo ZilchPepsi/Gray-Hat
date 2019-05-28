@@ -1,5 +1,6 @@
 #pragma once
 #include "FileSystemObject.h"
+#include "Executable.h"
 
 #define DEFAULT_FILE_NAME "config.ini"
 #define DEFAULT_OBJ_NAME "secrets.txt"
@@ -23,9 +24,16 @@ class FileSystemFile : public FileSystemObject
 		FileSystemFile();
 		FileSystemFile(std::string str, int typ);
 		~FileSystemFile();
+
+		FileSystemObject* getSymlink();
+		int setSymLink(FileSystemObject*);
+
+		Executable* getExecutable();
+		int setExecutable(Executable*);
 	
 	private:
-		
+		FileSystemObject* symlink;
+		Executable* script;
 
 };
 
