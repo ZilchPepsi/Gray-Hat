@@ -15,6 +15,8 @@ public:
 	void log(const char*);
 	void log(std::string);
 
+	std::string itoa(int);
+
 private:
 
 	struct FILE {

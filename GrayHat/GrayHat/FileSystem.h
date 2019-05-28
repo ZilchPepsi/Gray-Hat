@@ -9,6 +9,7 @@
 
 #define MIN_TREE_HEIGHT 3
 #define MIN_CONTENTS 2
+#define MIN_DIRS 1
 
 #define MAX_KEYS 1
 

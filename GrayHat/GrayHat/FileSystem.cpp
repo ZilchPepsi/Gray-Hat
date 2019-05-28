@@ -16,6 +16,8 @@ FileSystem::~FileSystem()
 
 int FileSystem::generateSystem()
 {
+	logger.log("generating system");
+
 	srand((unsigned int)time(0));
 	NameGenerator generator;
 	generator.init();
@@ -27,15 +29,12 @@ int FileSystem::generateSystem()
 	//global maxes for this generated map
 	int maxHeight = std::max(rand() % MAX_TREE_HEIGHT + 1, MIN_TREE_HEIGHT);	//max height of tree
 	int maxContents = std::max(rand() % MAX_CONTENTS + 1, MIN_CONTENTS);		//max number of items in a directory
-	int maxDirs = std::min( rand() % MAX_DIRS+1 , maxContents-1);					//max directories in a directory
+	int maxDirs = std::max( rand() % maxContents , MIN_DIRS);					//max directories in a directory
 
-	char buff[10];
-	_itoa_s(maxHeight, buff, 10);
-	logger.log(std::string("maxHeight: ") + buff);
-	_itoa_s(maxContents, buff, 10);
-	logger.log(std::string("maxContents: ") + buff);
-	_itoa_s(maxDirs, buff, 10);
-	logger.log(std::string("maxDirs:") + buff);
+	logger.log("max height: " + logger.itoa(maxHeight));
+	logger.log("max contents: " + logger.itoa(maxContents));
+	logger.log("max dirs: " + logger.itoa(maxDirs));
+
 
 	//populate root directory
 	for (int x = 0; x < maxDirs; x++) {
@@ -82,9 +81,9 @@ int FileSystem::generateSystem()
 				if (fo->getHeight() == maxHeight)
 					continue;
 
-				int maxC = std::max(rand() % maxContents + 1, MIN_CONTENTS);	//contents
-				int maxD = std::min(rand() % maxDirs, maxC - 1);				//directories
-
+				int maxC = std::max(rand() % maxContents + 1, MIN_CONTENTS);					//contents
+				int maxD = std::max((rand() % (std::min(maxContents-1,maxDirs)))+1, MIN_DIRS);	//directories
+					
 				//populate directory
 				for (int x = 0; x < maxD; x++) {
 					fo->addSubFolder(generator.generateDirectoryName(), TYPE_DIR);
@@ -96,7 +95,7 @@ int FileSystem::generateSystem()
 				//set height of all contents in this directory and add to stack
 				std::vector<FileSystemObject*>* subCont = fo->getContents();
 				for (std::vector<FileSystemObject*>::iterator it = subCont->begin(); it != subCont->end(); it++) {
-					(*it)->setHeight((*it)->getHeight() + 1);
+					(*it)->setHeight(fo->getHeight() + 1);
 					stack.push(*it);
 				}
 				delete subCont;
@@ -133,6 +132,7 @@ int FileSystem::generateSystem()
 					if (!placed) {
 						if ((rand() % 100) < PROB_FILE_EXE) {
 							fi->setType(TYPE_FILE_EXE);
+							fi->changeExtension(".exe");
 							executables.push_back(fi);
 						}
 						else {
@@ -169,12 +169,12 @@ int FileSystem::generateSystem()
 		delete contents;
 	}
 
+	//TODO set executables
 	return 0;
 }
 
 FileSystemFolder* FileSystem::getRoot()
 {
-	logger.log(std::string("returning root with name ") + root.getName());
 	return &root;
 }
 

@@ -70,3 +70,11 @@ void Logger::log(const char* str) {
 	file->file->flush();
 	file->lock->unlock();
 }
+
+
+std::string Logger::itoa(int x) {
+	static char buff[10];
+	_itoa_s(x,buff, 10);
+
+	return std::string(buff);
+}
