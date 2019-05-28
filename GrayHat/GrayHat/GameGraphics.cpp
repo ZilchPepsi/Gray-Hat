@@ -115,7 +115,6 @@ void GameGraphics::drawBufferHist()
 void GameGraphics::drawCurrentFolder()
 {
 	graphics.writeText("Current directory: ", 0, (CHAR_WIDTH / 2) + 1, TerminalGraphics::CC_FORE_CYN);
-	int numLinesDrawn = 0;
 	char line[64];
 	int contentsRow = 2;
 
@@ -128,7 +127,6 @@ void GameGraphics::drawCurrentFolder()
 		graphics.writeText("kB", contentsRow, (CHAR_WIDTH * 3 / 4) + 29, TerminalGraphics::CC_FORE_GRN);
 
 		contentsRow++;
-		numLinesDrawn++;
 
 		if (curFolder->getParent() != NULL)
 		{
@@ -138,7 +136,6 @@ void GameGraphics::drawCurrentFolder()
 			graphics.writeText(line, contentsRow, (CHAR_WIDTH * 3 / 4), TerminalGraphics::CC_FORE_YEL);
 			graphics.writeText("kB", contentsRow, (CHAR_WIDTH * 3 / 4) + 29, TerminalGraphics::CC_FORE_GRN);
 			contentsRow++;
-			numLinesDrawn++;
 		}
 
 		std::vector<FileSystemObject *> * contents = curFolder->getContents();
@@ -152,12 +149,12 @@ void GameGraphics::drawCurrentFolder()
 			sprintf_s(line, "%28d", contents->at(i)->getSize());
 			graphics.writeText(line, contentsRow + i, (CHAR_WIDTH * 3 / 4), contentColor);
 			graphics.writeText("kB", contentsRow + i, (CHAR_WIDTH * 3 / 4) + 29, TerminalGraphics::CC_FORE_GRN);
-			numLinesDrawn++;
 		}
+		contentsRow += contents->size();
 		delete contents;
 	}
 
-	for (int i = numLinesDrawn; i < MAX_CONTENTS; i++)
+	for (int i = 0; i < MAX_CONTENTS + contentsRow; i++)
 	{
 		sprintf_s(line, "%-60s", " ");
 		graphics.writeText(line, contentsRow + i, (CHAR_WIDTH / 2) + 1);
