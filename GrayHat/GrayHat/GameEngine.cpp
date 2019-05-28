@@ -100,6 +100,15 @@ std::string GameEngine::executeCommand(std::string command)
 					player.setLocation(dynamic_cast<FileSystemFolder*>(contents->at(i)));
 					moved = true;
 				}
+				else if (contents->at(i)->getType() == TYPE_FILE_SYM && contents->at(i)->getName() == dirName)
+				{
+					FileSystemObject * symTarget = (dynamic_cast<FileSystemFile*>(contents->at(i)))->getSymlink();
+					if(symTarget->getType() == TYPE_DIR) // targetting a folder
+						player.setLocation(dynamic_cast<FileSystemFolder*>(symTarget));
+					else //targetting a file, jump to parent directory
+						player.setLocation(dynamic_cast<FileSystemFolder*>(symTarget->getParent()));
+					moved = true;
+				}
 			}
 			delete contents;
 		}
@@ -107,5 +116,6 @@ std::string GameEngine::executeCommand(std::string command)
 			return "Directory moved to: " + dirName;
 		return "Invalid directory: " + dirName;
 	}
+	
 	return "Invalid command: " + command;
 }

@@ -4,6 +4,7 @@
 #include "KeyboardInput_win.h"
 #include "Player.h"
 #include "FileSystem.h"
+#include "FileSystemFile.h"
 #include <string>
 #include <vector>
 #include <chrono>

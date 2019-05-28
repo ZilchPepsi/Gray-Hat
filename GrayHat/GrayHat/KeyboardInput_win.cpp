@@ -176,6 +176,10 @@ void KeyboardInput_win::poll()
 	{
 		curPressed[KEY_PER] = true;
 	}
+	if (GetKeyState(VK_OEM_MINUS) & IS_PRESSED)
+	{
+		curPressed[KEY_UNDERSCORE] = true;
+	}
 
 	// set number curPressed
 	if (GetKeyState('0') & IS_PRESSED)
@@ -402,6 +406,13 @@ void KeyboardInput_win::poll()
 			addToBuffer('>');
 		else
 			addToBuffer('.');
+	}
+	if (curPressed[KEY_UNDERSCORE] && !(prevPressed[KEY_UNDERSCORE]))
+	{
+		if (curPressed[KEY_SHIFT])
+			addToBuffer('_');
+		else
+			addToBuffer('-');
 	}
 
 	// add letters to buffer
