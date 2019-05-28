@@ -20,10 +20,22 @@ int FileSystem::generateSystem()
 	NameGenerator generator;
 	generator.init();
 	
+	std::vector<FileSystemFile*> symlinks;
+	std::vector<FileSystemFile*> executables;
+
+
 	//global maxes for this generated map
 	int maxHeight = std::max(rand() % MAX_TREE_HEIGHT + 1, MIN_TREE_HEIGHT);	//max height of tree
 	int maxContents = std::max(rand() % MAX_CONTENTS + 1, MIN_CONTENTS);		//max number of items in a directory
 	int maxDirs = std::min( rand() % MAX_DIRS+1 , maxContents-1);					//max directories in a directory
+
+	char buff[10];
+	_itoa_s(maxHeight, buff, 10);
+	logger.log(std::string("maxHeight: ") + buff);
+	_itoa_s(maxContents, buff, 10);
+	logger.log(std::string("maxContents: ") + buff);
+	_itoa_s(maxDirs, buff, 10);
+	logger.log(std::string("maxDirs:") + buff);
 
 	//populate root directory
 	for (int x = 0; x < maxDirs; x++) {
@@ -121,9 +133,11 @@ int FileSystem::generateSystem()
 					if (!placed) {
 						if ((rand() % 100) < PROB_FILE_EXE) {
 							fi->setType(TYPE_FILE_EXE);
+							executables.push_back(fi);
 						}
 						else {
 							fi->setType(TYPE_FILE_SYM);
+							symlinks.push_back(fi);
 						}
 					}
 				}
@@ -135,8 +149,10 @@ int FileSystem::generateSystem()
 	}
 	delete contents;
 
-	//links symbolic links, chooses exe to use
-	//TODO fill out exe's and symlinks
+	//links all symbolic links
+	for (std::vector<FileSystemFile*>::iterator it = symlinks.begin(); it != symlinks.end(); it++) {
+		int height = rand() % maxHeight;
+	}
 
 	return 0;
 }
