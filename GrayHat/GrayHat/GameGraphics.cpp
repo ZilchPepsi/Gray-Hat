@@ -192,12 +192,12 @@ void GameGraphics::drawInventory()
 		if (inventory != NULL && i < inventory->size()) // draw inventory item
 		{
 			sprintf_s(line, "(%d) %-30s", (int)i, inventory->at(i)->getName().c_str());
-			graphics.writeText(line, inventoryRow + (int)i, (CHAR_WIDTH / 2) + 1, TerminalGraphics::CC_FORE_MAG);
+			graphics.writeText(line, inventoryRow + (int)i + 1, (CHAR_WIDTH / 2) + 1, TerminalGraphics::CC_FORE_MAG);
 		}
 		else // overwrite prev lines / make blank
 		{
 			sprintf_s(line, "%-40s", " ");
-			graphics.writeText(line, inventoryRow + (int)i, (CHAR_WIDTH / 2) + 1, TerminalGraphics::CC_FORE_WHT);
+			graphics.writeText(line, inventoryRow + (int)i + 1, (CHAR_WIDTH / 2) + 1, TerminalGraphics::CC_FORE_WHT);
 		}
 	}
 }
