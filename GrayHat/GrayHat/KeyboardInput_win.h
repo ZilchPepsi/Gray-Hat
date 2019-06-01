@@ -6,6 +6,9 @@
 #include <chrono>
 #include <queue>
 
+
+#define NUM_KEYS 50
+
 class KeyboardInput_win : public KeyboardInput
 {
 	public:
@@ -43,9 +46,8 @@ private:
 	std::thread pollingThread;
 	bool running, reading, entered;
 	
-	const static int numKeys = 50;
-	bool curPressed[numKeys];
-	bool prevPressed[numKeys];
+	bool curPressed[NUM_KEYS];
+	bool prevPressed[NUM_KEYS];
 
 	int MAX_BUFFER_LENGTH = 55;
 
