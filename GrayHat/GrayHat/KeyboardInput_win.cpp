@@ -17,7 +17,9 @@ KeyboardInput_win::~KeyboardInput_win()
 
 std::string KeyboardInput_win::getInputBuffer()
 {
+	bufferLock.lock();
 	return buffer;
+	bufferLock.unlock();
 }
 
 void KeyboardInput_win::setMaxBufferSize(int l)
@@ -61,6 +63,7 @@ void KeyboardInput_win::run()
 		{
 			poll();
 		}
+		std::this_thread::sleep_for(std::chrono::milliseconds(10));
 	}
 }
 
@@ -97,8 +100,10 @@ void KeyboardInput_win::backspacePressed()
 {
 	if (cursorPos > 0)
 	{
+		bufferLock.lock();
 		buffer = buffer.substr(0, buffer.length() - 1);
 		cursorPos--;
+		bufferLock.unlock();
 		/*if (cursorPos == 1)
 		{
 			buffer = buffer.substr(1, buffer.length() - 1);
@@ -137,8 +142,10 @@ std::string KeyboardInput_win::popBufferQueue()
 	
 	if (!(prevBuffers.empty()))
 	{
+		bufferLock.lock();
 		retval = prevBuffers.front();
 		prevBuffers.pop();
+		bufferLock.unlock();
 	}
 
 	return retval;
@@ -146,6 +153,7 @@ std::string KeyboardInput_win::popBufferQueue()
 
 void KeyboardInput_win::poll()
 {
+	keyboardLock.lock();
 	// check for special keys
 	if (GetKeyState(VK_SHIFT) & IS_PRESSED)
 	{
@@ -658,14 +666,17 @@ void KeyboardInput_win::poll()
 		prevPressed[i] = curPressed[i];
 		curPressed[i] = false;
 	}
+	keyboardLock.unlock();
 }
 
 int KeyboardInput_win::popArrowKeyQueue()
 {
 	if (arrowKeyQueue.size() > 0)
 	{
+		keyboardLock.lock();
 		int retval = arrowKeyQueue.front();
 		arrowKeyQueue.pop();
+		keyboardLock.unlock();
 		return retval;
 	}
 	return ARR_KEY_NONE;
@@ -673,10 +684,14 @@ int KeyboardInput_win::popArrowKeyQueue()
 
 bool KeyboardInput_win::hasEntered()
 {
+	keyboardLock.lock();
 	return entered;
+	keyboardLock.unlock();
 }
 
 void KeyboardInput_win::resetEntered()
 {
+	keyboardLock.lock();
 	entered = false;
+	keyboardLock.unlock();
 }

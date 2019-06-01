@@ -5,6 +5,7 @@
 #include <thread>
 #include <chrono>
 #include <queue>
+#include <mutex>
 
 
 #define NUM_KEYS 50
@@ -26,6 +27,8 @@ class KeyboardInput_win : public KeyboardInput
 		void resetEntered();
 
 private:
+
+	std::mutex keyboardLock, bufferLock;
 
 	Logger log;
 
