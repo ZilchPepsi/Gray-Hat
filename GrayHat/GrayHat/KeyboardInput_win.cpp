@@ -27,7 +27,7 @@ void KeyboardInput_win::setMaxBufferSize(int l)
 
 std::string KeyboardInput_win::init()
 {
-	for (int i = 0; i < numKeys; i++)
+	for (int i = 0; i < NUM_KEYS; i++)
 	{
 		curPressed[i] = false;
 		prevPressed[i] = false;
@@ -653,7 +653,7 @@ void KeyboardInput_win::poll()
 	}
 
 	//push cur to prev and clear cur
-	for (int i = 0; i < numKeys; i++)
+	for (int i = 0; i < NUM_KEYS; i++)
 	{
 		prevPressed[i] = false;
 		prevPressed[i] = curPressed[i];
