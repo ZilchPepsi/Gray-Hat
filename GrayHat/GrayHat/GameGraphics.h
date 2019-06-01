@@ -11,6 +11,9 @@
 #include "Logger.h"
 #include "FileSystem.h"
 
+#define STATE_GAME 0
+#define STATE_MENU_MAIN 1
+
 class GameGraphics
 {
 	public:
@@ -26,6 +29,8 @@ class GameGraphics
 		void addBufferHistory(std::string text);
 		void setCurrentFolder(FileSystemFolder * folder);
 		void setCurrentInventory(std::vector<FileSystemFile *> * ptr);
+		void setOptionsIndex(int index);
+		void setGraphicsState(int s);
 
 		void render();
 		void run();
@@ -50,6 +55,9 @@ class GameGraphics
 
 		std::thread renderer;
 		bool running = true, editing = true;
+		int state, prevState;
+
+		int optionSelected = 0;
 
 		int SCRN_WIDTH = 1000;
 		int SCRN_HEIGHT = 600;
@@ -63,13 +71,21 @@ class GameGraphics
 		int maxBufferHistLines = 5;
 		int maxInventorySize = 7;
 		int inventoryRow = 12;
+		int titleRow = 6;
+		int titleCol = 40;
+		int optionsRow = titleRow + 18;
+		int optionsCol = titleCol + 18;
 
 		// render helper functions
+		// -----------------------
 		void drawPartitionLine();
 		void drawRunningProgs();
 		void drawBufferText();
 		void drawBufferHist();
 		void drawCurrentFolder();
 		void drawInventory();
+		// --------------------
+		void drawGrayHat();
+		void drawOptions();
 };
 

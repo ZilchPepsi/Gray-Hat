@@ -69,6 +69,9 @@ void TerminalGraphics_win::setScreenSize(int height, int width)
 	RECT r;
 	GetWindowRect(console, &r);
 	MoveWindow(console, r.left, r.top, width, height, TRUE);
+
+	DWORD style = GetWindowLongA(console, GWL_STYLE);
+	SetWindowLongA(console, GWL_STYLE, style ^ WS_THICKFRAME);
 }
 
 void TerminalGraphics_win::setCursorVisible(bool visible)

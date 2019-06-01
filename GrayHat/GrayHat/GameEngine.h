@@ -1,6 +1,7 @@
 #pragma once
 
 #include "GameGraphics.h"
+#include "KeyboardInput.h"
 #include "KeyboardInput_win.h"
 #include "Player.h"
 #include "FileSystem.h"
@@ -35,9 +36,13 @@ class GameEngine
 		KeyboardInput_win ki;
 		FileSystem fs;
 		Player player;
+
+		int state, optionsIndex;
 		
 		bool running;
 		std::string currentBuffer;
 		int testVar;
+
+		void handleArrowKeys();
 };
 

@@ -26,6 +26,11 @@ void GameGraphics::init()
 
 	inventory = NULL;
 
+	state = STATE_MENU_MAIN;
+	prevState = STATE_MENU_MAIN;
+	
+	optionSelected = 0;
+
 	//graphics.writeText(retval, 0, 0);
 	renderer = std::thread(&GameGraphics::run,this); // start rendering thread
 }
@@ -50,14 +55,26 @@ void GameGraphics::render()
 	//graphics.clearScreen();
 	graphics.setCursorVisible(false);
 
-	drawPartitionLine();
-	drawRunningProgs();
-	drawBufferHist();
-	drawCurrentFolder();
-	drawInventory();
-	drawBufferText();
+	if (state != prevState)
+		graphics.clearScreen();
 
+	if (state == STATE_GAME)
+	{
+		drawPartitionLine();
+		drawRunningProgs();
+		drawBufferHist();
+		drawCurrentFolder();
+		drawInventory();
+		drawBufferText();
+	}
+	else if (state == STATE_MENU_MAIN)
+	{
+		drawGrayHat();
+		drawOptions();
+	}
+	
 	graphics.setCursorVisible(true);
+	prevState = state;
 }
 
 void GameGraphics::drawBufferText()
@@ -153,7 +170,7 @@ void GameGraphics::drawCurrentFolder()
 			graphics.writeText(line, contentsRow + i, (CHAR_WIDTH * 3 / 4), contentColor);
 			graphics.writeText("kB", contentsRow + i, (CHAR_WIDTH * 3 / 4) + 29, TerminalGraphics::CC_FORE_GRN);
 		}
-		contentsRow += contents->size();
+		contentsRow += (int)contents->size();
 		delete contents;
 	}
 
@@ -174,13 +191,13 @@ void GameGraphics::drawInventory()
 	{
 		if (inventory != NULL && i < inventory->size()) // draw inventory item
 		{
-			sprintf_s(line, "(%d) %-30s", i, inventory->at(i)->getName());
-			graphics.writeText(line, inventoryRow + i, (CHAR_WIDTH / 2) + 1, TerminalGraphics::CC_FORE_MAG);
+			sprintf_s(line, "(%d) %-30s", (int)i, inventory->at(i)->getName().c_str());
+			graphics.writeText(line, inventoryRow + (int)i, (CHAR_WIDTH / 2) + 1, TerminalGraphics::CC_FORE_MAG);
 		}
 		else // overwrite prev lines / make blank
 		{
 			sprintf_s(line, "%-40s", " ");
-			graphics.writeText(line, inventoryRow + i, (CHAR_WIDTH / 2) + 1, TerminalGraphics::CC_FORE_WHT);
+			graphics.writeText(line, inventoryRow + (int)i, (CHAR_WIDTH / 2) + 1, TerminalGraphics::CC_FORE_WHT);
 		}
 	}
 }
@@ -224,4 +241,60 @@ void GameGraphics::setCurrentFolder(FileSystemFolder * folder)
 void GameGraphics::setCurrentInventory(std::vector<FileSystemFile *> * ptr)
 {
 	inventory = ptr;
+}
+
+void GameGraphics::drawGrayHat()
+{
+	graphics.writeText("           =================/------         ", titleRow + 0, titleCol);
+	graphics.writeText("           |###############/      |         ", titleRow + 1, titleCol);
+	graphics.writeText("           |##############/       |         ", titleRow + 2, titleCol);
+	graphics.writeText("           |#############/        |         ", titleRow + 3, titleCol);
+	graphics.writeText("           |############/         |         ", titleRow + 4, titleCol);
+	graphics.writeText("           |###########/          |         ", titleRow + 5, titleCol);
+	graphics.writeText("         =============/---------------      ", titleRow + 6, titleCol);
+	graphics.writeText("       ___    ___    / ___                  ", titleRow + 7, titleCol);
+	graphics.writeText("      |      |   |  / |   |  |   |          ", titleRow + 8, titleCol);
+	graphics.writeText("      |  __  |___| /  |___|  |___|          ", titleRow + 9, titleCol);
+	graphics.writeText("      |___|  |  \\ /   |   |     |           ", titleRow + 10, titleCol);
+	graphics.writeText("                 /            ___   ____    ", titleRow + 11, titleCol);
+	graphics.writeText("                /     |   |  |   |    |     ", titleRow + 12, titleCol);
+	graphics.writeText("               /      |___|  |___|    |     ", titleRow + 13, titleCol);
+	graphics.writeText("              /       |   |  |   |    |     ", titleRow + 14, titleCol);
+}
+
+void GameGraphics::drawOptions()
+{
+	graphics.writeText(" P1 v AI ", optionsRow,     optionsCol, TerminalGraphics::CC_FORE_CYN);
+	graphics.writeText(" P1 v P2 ", optionsRow + 2, optionsCol, TerminalGraphics::CC_FORE_CYN);
+	graphics.writeText("   Exit  ", optionsRow + 4, optionsCol, TerminalGraphics::CC_FORE_CYN);
+
+	// draw selection brackets
+	for (int i = 0; i < 3; i++)
+	{
+		if (i == optionSelected)
+		{
+			graphics.writeText("[", (i * 2) + optionsRow, optionsCol - 2, TerminalGraphics::CC_FORE_YEL);
+			graphics.writeText("]", (i * 2) + optionsRow, optionsCol + 10, TerminalGraphics::CC_FORE_YEL);
+		}
+		else
+		{
+			graphics.writeText(" ", (i * 2) + optionsRow, optionsCol - 2);
+			graphics.writeText(" ", (i * 2) + optionsRow, optionsCol + 10);
+		}
+	}
+	
+}
+
+void GameGraphics::setOptionsIndex(int index)
+{
+	if (state == STATE_MENU_MAIN)
+	{
+		if (0 <= index && index <= 2)
+			optionSelected = index;
+	}
+}
+
+void GameGraphics::setGraphicsState(int s)
+{
+	state = s;
 }

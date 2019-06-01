@@ -1,7 +1,7 @@
 #include "KeyboardInput_win.h"
 
 
-KeyboardInput_win::KeyboardInput_win()
+KeyboardInput_win::KeyboardInput_win() : log("keyboard_input_win")
 {
 	init();
 }
@@ -40,6 +40,7 @@ std::string KeyboardInput_win::init()
 	//setup polling thread
 	running = true;
 	reading = false;
+	entered = false;
 	pollingThread = std::thread(&KeyboardInput_win::run, this);
 
 	return "KYBD INIT\n";
@@ -126,6 +127,8 @@ void KeyboardInput_win::enterPressed()
 	prevBuffers.push(buffer);
 	buffer = "";
 	cursorPos = 0;
+	entered = true;
+	log.log("enter");
 }
 
 std::string KeyboardInput_win::popBufferQueue()
@@ -179,6 +182,22 @@ void KeyboardInput_win::poll()
 	if (GetKeyState(VK_OEM_MINUS) & IS_PRESSED)
 	{
 		curPressed[KEY_UNDERSCORE] = true;
+	}
+	if (GetKeyState(VK_UP) & IS_PRESSED)
+	{
+		curPressed[KEY_UP] = true;
+	}
+	if (GetKeyState(VK_DOWN) & IS_PRESSED)
+	{
+		curPressed[KEY_DOWN] = true;
+	}
+	if (GetKeyState(VK_LEFT) & IS_PRESSED)
+	{
+		curPressed[KEY_LEFT] = true;
+	}
+	if (GetKeyState(VK_RIGHT) & IS_PRESSED)
+	{
+		curPressed[KEY_RIGHT] = true;
 	}
 
 	// set number curPressed
@@ -612,6 +631,26 @@ void KeyboardInput_win::poll()
 	{
 		enterPressed();
 	}
+	if (curPressed[KEY_UP] && !(prevPressed[KEY_UP]))
+	{
+		log.log("up");
+		arrowKeyQueue.push(ARR_KEY_UP);
+	}
+	if (curPressed[KEY_DOWN] && !(prevPressed[KEY_DOWN]))
+	{
+		log.log("down");
+		arrowKeyQueue.push(ARR_KEY_DOWN);
+	}
+	if (curPressed[KEY_LEFT] && !(prevPressed[KEY_LEFT]))
+	{
+		log.log("left");
+		arrowKeyQueue.push(ARR_KEY_LEFT);
+	}
+	if (curPressed[KEY_RIGHT] && !(prevPressed[KEY_RIGHT]))
+	{
+		log.log("right");
+		arrowKeyQueue.push(ARR_KEY_RIGHT);
+	}
 
 	//push cur to prev and clear cur
 	for (int i = 0; i < numKeys; i++)
@@ -622,3 +661,23 @@ void KeyboardInput_win::poll()
 	}
 }
 
+int KeyboardInput_win::popArrowKeyQueue()
+{
+	if (arrowKeyQueue.size() > 0)
+	{
+		int retval = arrowKeyQueue.front();
+		arrowKeyQueue.pop();
+		return retval;
+	}
+	return ARR_KEY_NONE;
+}
+
+bool KeyboardInput_win::hasEntered()
+{
+	return entered;
+}
+
+void KeyboardInput_win::resetEntered()
+{
+	entered = false;
+}

@@ -1,5 +1,6 @@
 #pragma once
 #include "KeyboardInput.h"
+#include "Logger.h"
 #include <Windows.h>
 #include <thread>
 #include <chrono>
@@ -17,8 +18,13 @@ class KeyboardInput_win : public KeyboardInput
 		void run();
 		void setMaxBufferSize(int l);
 		std::string popBufferQueue();
+		int popArrowKeyQueue();
+		bool hasEntered();
+		void resetEntered();
 
 private:
+
+	Logger log;
 
 	void poll();
 	void addToBuffer(char c);
@@ -32,8 +38,10 @@ private:
 	std::queue<std::string> prevBuffers;
 	int cursorPos;
 
+	std::queue<int> arrowKeyQueue;
+
 	std::thread pollingThread;
-	bool running, reading;
+	bool running, reading, entered;
 	
 	const static int numKeys = 50;
 	bool curPressed[numKeys];
