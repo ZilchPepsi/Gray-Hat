@@ -161,16 +161,33 @@ void GameGraphics::drawCurrentFolder()
 		}
 
 		std::vector<FileSystemObject *> * contents = curFolder->getContents();
+
+		int startPoint = (CHAR_WIDTH / 2) + 1;
+		int availableWidth = CHAR_WIDTH - startPoint;
+		std::string format;
+		int size, sizeChars;
 		for (int i = 0; i < contents->size(); i++)
 		{
 			int contentColor = TerminalGraphics::CC_FORE_WHT;
 			if (contents->at(i)->getType() == TYPE_DIR)
 				contentColor = TerminalGraphics::CC_FORE_YEL;
-			sprintf_s(line, "\t-> %-30s", contents->at(i)->getName().c_str());
-			graphics.writeText(line, contentsRow + i, (CHAR_WIDTH / 2) + 1, contentColor);
-			sprintf_s(line, "%28d", contents->at(i)->getSize());
-			graphics.writeText(line, contentsRow + i, (CHAR_WIDTH * 3 / 4), contentColor);
-			graphics.writeText("kB", contentsRow + i, (CHAR_WIDTH * 3 / 4) + 29, TerminalGraphics::CC_FORE_GRN);
+
+			size = contents->at(i)->getSize();
+			sizeChars = 0;
+			while (size > 0) {
+				sizeChars++;
+				size /= 10;
+			}
+			format = "\t-> %-";
+			format += logger.itoa(availableWidth - sizeChars - 9) + "s%d"; //9 because starting '->' is 7 and kB is 2
+			sprintf_s(line, format.c_str(), contents->at(i)->getName().c_str(), contents->at(i)->getSize());
+			graphics.writeText(line, contentsRow + i, startPoint, contentColor);
+			graphics.writeText("kB", contentsRow + i, startPoint + (availableWidth - 1), TerminalGraphics::CC_FORE_GRN);
+			//sprintf_s(line, "\t-> %-30s", contents->at(i)->getName().c_str());
+			//graphics.writeText(line, contentsRow + i, (CHAR_WIDTH / 2) + 1, contentColor);
+			//sprintf_s(line, "%28d", contents->at(i)->getSize());
+			//graphics.writeText(line, contentsRow + i, (CHAR_WIDTH * 3 / 4), contentColor);
+			//graphics.writeText("kB", contentsRow + i, (CHAR_WIDTH * 3 / 4) + 29, TerminalGraphics::CC_FORE_GRN);
 		}
 		contentsRow += (int)contents->size();
 		delete contents;

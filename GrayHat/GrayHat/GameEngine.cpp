@@ -36,29 +36,20 @@ int GameEngine::init()
 
 int GameEngine::update()
 {
-	logger.log("starting GameEngine update");
 	if (state == STATE_GAME)
 	{
-		logger.log("current state is STATE_GAME");
 
-		logger.log("setting program percentage");
 		gg.setProgramPercent("test_multithreading", testVar);
 		testVar++;
 		testVar %= 100;
-		logger.log("set program percentage");
-		logger.log("getting current buffer");
 		//test keyboard input
 		currentBuffer = ki.getInputBuffer();
-		logger.log("setting gameGraphics input buffer to '" + currentBuffer+"'");
 		gg.setInputBuffer(currentBuffer);
 
 		//add prev buffers
-		logger.log("getting previous command");
 		std::string prevBuffer = ki.popBufferQueue();
-		logger.log("previous command: '" + prevBuffer + "'");
 		if (prevBuffer != "")
 		{
-			logger.log("executing previous command");
 			// Execute command
 			std::string retCMD = executeCommand(prevBuffer);
 
@@ -66,29 +57,24 @@ int GameEngine::update()
 			gg.addBufferHistory(retCMD);
 		}
 
-		logger.log("setting current folder to " + player.getLocation()->getName());
 		// update current directory information
 		gg.setCurrentFolder(player.getLocation());
 	}
 	else if (state == STATE_MENU_MAIN)
 	{
-		logger.log("current state is main menu");
 		handleArrowKeys();
 		if (ki.hasEntered())
 		{
 			if (optionsIndex == 0)
 			{
-				logger.log("enter was pressed, changing state to STATE_GAME");
 				state = STATE_GAME;
 			}
 			else if (optionsIndex == 1)
 			{
-				logger.log("enter was pressed, changing state to STATE_GAME");
 				state = STATE_GAME;
 			}
 			else if (optionsIndex == 2)
 			{
-				logger.log("enter was pressed, exiting...");
 				running = false;
 			}
 			ki.resetEntered();
