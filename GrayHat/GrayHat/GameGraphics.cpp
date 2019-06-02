@@ -193,7 +193,7 @@ void GameGraphics::drawCurrentFolder()
 		delete contents;
 	}
 
-	for (int i = 0; i < MAX_CONTENTS + contentsRow; i++)
+	for (int i = 0; i < MAX_CONTENTS - (contentsRow - 2); i++)
 	{
 		sprintf_s(line, "%-60s", " ");
 		graphics.writeText(line, contentsRow + i, (CHAR_WIDTH / 2) + 1);
