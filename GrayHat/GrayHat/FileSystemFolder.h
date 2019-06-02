@@ -24,11 +24,14 @@ class FileSystemFolder : public FileSystemObject
 		std::vector<FileSystemFolder*> getFolders();
 		std::vector<FileSystemFile*> getFiles();
 
+		int getSize();
+
 
 
 	private:
 		
 		std::vector<FileSystemFile*> files;
 		std::vector<FileSystemFolder*> folders;
+		void resize();
 };
 

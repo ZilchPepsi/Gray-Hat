@@ -73,5 +73,3 @@ FileSystemObject* FileSystemObject::getParent() {
 void FileSystemObject::setParent(FileSystemObject* f) {
 	parent = f;
 }
-
-

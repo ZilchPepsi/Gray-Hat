@@ -1,4 +1,5 @@
 #include "FileSystemFolder.h"
+#include <stack>
 
 FileSystemFolder::FileSystemFolder() : FileSystemObject(DEFAULT_DIR_NAME, TYPE_DIR){}
 
@@ -62,4 +63,41 @@ std::vector<FileSystemFolder*> FileSystemFolder::getFolders() {
 
 std::vector<FileSystemFile*> FileSystemFolder::getFiles() {
 	return files;
+}
+
+
+void FileSystemFolder::resize() {
+	std::stack<FileSystemObject*> stack;
+	stack.push(this);
+
+	size = 0;
+	FileSystemFolder *fo;
+	FileSystemObject* obj;
+	while (!stack.empty()) {
+		obj = stack.top();
+		stack.pop();
+		if ((fo = dynamic_cast<FileSystemFolder*>(obj)) != NULL) {
+
+			int sum = 1;
+			std::vector<FileSystemObject*>* contents = fo->getContents();
+			for (std::vector<FileSystemObject*>::iterator it = contents->begin(); it != contents->end(); it++) {
+				sum += (*it)->getSize();
+			}
+			delete contents;
+			size += sum;
+		}
+		//this is a file, return the size of the file
+		else {
+			size += obj->getSize();
+		}
+	}
+}
+
+
+int FileSystemFolder::getSize() {
+	if (size == 1) {
+		resize();
+	}
+
+	return size;
 }

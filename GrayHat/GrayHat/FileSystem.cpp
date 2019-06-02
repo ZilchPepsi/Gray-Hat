@@ -117,6 +117,7 @@ int FileSystem::generateSystem()
 							fi->setType(TYPE_FILE_OBJ);
 							fi->setName(DEFAULT_OBJ_NAME);
 							fi->setDisplayName(DEFAULT_OBJ_NAME);
+							fi->setSize(DEFAULT_OBJ_SIZE);
 							objectivePlaced = true;
 							placed = true;
 						}
@@ -124,6 +125,7 @@ int FileSystem::generateSystem()
 							fi->setType(TYPE_FILE_KEY);
 							fi->setName(DEFAULT_KEY_NAME);
 							fi->setDisplayName(DEFAULT_KEY_NAME);
+							fi->setSize(DEFAULT_KEY_SIZE);
 							keyPlaced = true;
 							placed = true;
 						}
@@ -132,18 +134,21 @@ int FileSystem::generateSystem()
 					if (!placed) {
 						if ((rand() % 100) < PROB_FILE_EXE) {
 							fi->setType(TYPE_FILE_EXE);
-							fi->changeExtension(".exe");
+							fi->setSize((rand() % MAX_EXE_SIZE) + 1);
+							fi->changeExtension(DEFAULT_EXE_EXT);
 							executables.push_back(fi);
 						}
 						else {
 							fi->setType(TYPE_FILE_SYM);
-							fi->changeExtension(".ln");
+							fi->setSize(DEFAULT_SYM_SIZE);
+							fi->changeExtension(DEFAULT_SYM_EXT);
 							symlinks.push_back(fi);
 						}
 					}
 				}
 				else {
 					fi->setType(TYPE_FILE_MISC);
+					fi->setSize((rand() % MAX_MISC_SIZE) + 1);
 				}
 			}
 		}
@@ -176,29 +181,4 @@ int FileSystem::generateSystem()
 FileSystemFolder* FileSystem::getRoot()
 {
 	return &root;
-}
-
-int FileSystem::treeSize(FileSystemObject* obj)
-{
-	FileSystemFolder *fo;
-
-	if ((fo = dynamic_cast<FileSystemFolder*>(obj)) != NULL) {
-
-		int sum = fo->getSize();
-		std::vector<FileSystemObject*>* contents = fo->getContents();
-		for (std::vector<FileSystemObject*>::iterator it = contents->begin(); it != contents->end(); it++) {
-			if (dynamic_cast<FileSystemFolder*>(*it) != NULL) {
-				sum += treeSize(*it);
-			}
-			else {
-				sum += (*it)->getSize();
-			}
-		}
-		delete contents;
-		return sum;
-	}
-	//this is a file, return the size of the file
-	else {
-		return obj->getSize();
-	}
 }

@@ -22,7 +22,6 @@ class FileSystem
 
 		int generateSystem();
 		FileSystemFolder* getRoot();
-		int treeSize(FileSystemObject*);
 	
 	private:
 		FileSystemFolder root;
