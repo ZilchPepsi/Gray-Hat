@@ -41,7 +41,7 @@ class GameEngine
 		
 		bool running;
 		std::string currentBuffer;
-		int testVar;
+		unsigned int testVar;
 
 		void handleArrowKeys();
 };

@@ -17,9 +17,7 @@ KeyboardInput_win::~KeyboardInput_win()
 
 std::string KeyboardInput_win::getInputBuffer()
 {
-	bufferLock.lock();
 	return buffer;
-	bufferLock.unlock();
 }
 
 void KeyboardInput_win::setMaxBufferSize(int l)
@@ -139,13 +137,17 @@ void KeyboardInput_win::enterPressed()
 std::string KeyboardInput_win::popBufferQueue()
 {
 	std::string retval = ""; 
-	
+	log.log("popping previous buffer...");
 	if (!(prevBuffers.empty()))
 	{
+		log.log("getting lock");
 		bufferLock.lock();
+		log.log("got lock");
 		retval = prevBuffers.front();
 		prevBuffers.pop();
+		log.log("got previous");
 		bufferLock.unlock();
+
 	}
 
 	return retval;
@@ -684,9 +686,7 @@ int KeyboardInput_win::popArrowKeyQueue()
 
 bool KeyboardInput_win::hasEntered()
 {
-	keyboardLock.lock();
 	return entered;
-	keyboardLock.unlock();
 }
 
 void KeyboardInput_win::resetEntered()

@@ -9,6 +9,7 @@ GameEngine::~GameEngine(){}
 
 int GameEngine::init()
 {
+	logger.log("game engine initializing");
 	running = true;
 	testVar = 0;
 	state = STATE_MENU_MAIN;
@@ -26,26 +27,36 @@ int GameEngine::init()
 
 	gg.setGraphicsState(state);
 
+	logger.log("game engine initialized");
+
 	return 0;
 }
 
 int GameEngine::update()
 {
+	logger.log("starting GameEngine update");
 	if (state == STATE_GAME)
 	{
-		gg.setProgramPercent("test_multithreading", testVar % 100);
+		logger.log("current state is STATE_GAME");
+
+		logger.log("setting program percentage");
+		gg.setProgramPercent("test_multithreading", testVar);
 		testVar++;
-
-		//std::this_thread::sleep_for(std::chrono::milliseconds(100));
-
+		testVar %= 100;
+		logger.log("set program percentage");
+		logger.log("getting current buffer");
 		//test keyboard input
 		currentBuffer = ki.getInputBuffer();
+		logger.log("setting gameGraphics input buffer to '" + currentBuffer+"'");
 		gg.setInputBuffer(currentBuffer);
 
 		//add prev buffers
+		logger.log("getting previous command");
 		std::string prevBuffer = ki.popBufferQueue();
+		logger.log("previous command: '" + prevBuffer + "'");
 		if (prevBuffer != "")
 		{
+			logger.log("executing previous command");
 			// Execute command
 			std::string retCMD = executeCommand(prevBuffer);
 
@@ -53,24 +64,29 @@ int GameEngine::update()
 			gg.addBufferHistory(retCMD);
 		}
 
+		logger.log("setting current folder to " + player.getLocation()->getName());
 		// update current directory information
 		gg.setCurrentFolder(player.getLocation());
 	}
 	else if (state == STATE_MENU_MAIN)
 	{
+		logger.log("current state is main menu");
 		handleArrowKeys();
 		if (ki.hasEntered())
 		{
 			if (optionsIndex == 0)
 			{
+				logger.log("enter was pressed, changing state to STATE_GAME");
 				state = STATE_GAME;
 			}
 			else if (optionsIndex == 1)
 			{
+				logger.log("enter was pressed, changing state to STATE_GAME");
 				state = STATE_GAME;
 			}
 			else if (optionsIndex == 2)
 			{
+				logger.log("enter was pressed, exiting...");
 				running = false;
 			}
 			ki.resetEntered();
@@ -78,6 +94,7 @@ int GameEngine::update()
 	}
 
 	gg.setGraphicsState(state);
+	logger.log("GameEngine updated");
 	return 0;
 }
 

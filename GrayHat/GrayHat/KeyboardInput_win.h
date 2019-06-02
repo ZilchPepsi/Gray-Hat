@@ -47,7 +47,8 @@ private:
 	std::queue<int> arrowKeyQueue;
 
 	std::thread pollingThread;
-	bool running, reading, entered;
+	bool running, reading;
+	volatile bool entered;
 	
 	bool curPressed[NUM_KEYS];
 	bool prevPressed[NUM_KEYS];
