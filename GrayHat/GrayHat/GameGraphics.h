@@ -5,6 +5,7 @@
 #include <thread>
 #include <chrono>
 #include <stdio.h>
+#include <mutex>
 #include "TerminalGraphics_win.h"
 #include "FileSystemFolder.h"
 #include "FileSystemFile.h"
@@ -40,12 +41,14 @@ class GameGraphics
 		//logger
 		Logger logger;
 
+		std::mutex programLock;
 		std::vector<std::string> curProgNames;
 		std::vector<int> curProgPercent;
 
 		char bufferText[40];
 		//std::string bufferText;
 		std::vector<std::string> bufferHistory;
+		std::mutex bufferLock;
 
 		FileSystemFolder * curFolder;
 
@@ -54,7 +57,7 @@ class GameGraphics
 		std::vector<FileSystemFile *> * inventory;
 
 		std::thread renderer;
-		bool running = true, editing = true;
+		bool running = true;
 		int state, prevState;
 
 		int optionSelected = 0;

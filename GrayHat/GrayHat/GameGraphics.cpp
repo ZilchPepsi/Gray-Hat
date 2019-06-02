@@ -20,7 +20,6 @@ void GameGraphics::init()
 
 	//bufferText = "";
 	running = true;
-	editing = false;
 
 	curFolder = NULL;
 
@@ -41,8 +40,7 @@ void GameGraphics::run()
 
 	while (running)
 	{
-		if(!editing)
-			render();
+		render();
 		std::this_thread::sleep_for(std::chrono::milliseconds(15)); // don't overwhelm this thread
 	}
 }
@@ -93,16 +91,17 @@ void GameGraphics::drawPartitionLine()
 
 void GameGraphics::addProgram(std::string program)
 {
-	editing = true;
+	programLock.lock();
 	curProgNames.push_back(program);
 	curProgPercent.push_back(0);
-	editing = false;
+	programLock.unlock();
 }
 
 void GameGraphics::drawRunningProgs()
 {
 	//draw currently running programs
 	graphics.writeText("Programs running:", curProgRow, 0, TerminalGraphics::CC_FORE_CYN);
+	programLock.lock();
 	char nameStr[40];
 	char percentStr[5];
 	for (int i = 0; i < curProgNames.size(); i++)
@@ -118,18 +117,21 @@ void GameGraphics::drawRunningProgs()
 			graphics.writeText("]", i + 2 + curProgRow, curProgPercentCol + 4, TerminalGraphics::CC_DEFAULT);
 		}
 	}
+	programLock.unlock();
 }
 
 void GameGraphics::drawBufferHist()
 {
 	char bufferStr[62];
 	int histRow = 1;
+	bufferLock.lock();
 	for (int i = (int)bufferHistory.size() - 1; i >= 0; i--)
 	{
 		sprintf_s(bufferStr, "%-60s", bufferHistory[i].c_str());;
 		graphics.writeText(bufferStr, CHAR_HEIGHT - 1 - histRow, (CHAR_WIDTH / 2) + 1, TerminalGraphics::CC_DEFAULT);
 		histRow++;
 	}
+	bufferLock.unlock();
 }
 
 void GameGraphics::drawCurrentFolder()
@@ -204,7 +206,7 @@ void GameGraphics::drawInventory()
 
 void GameGraphics::setProgramPercent(std::string program, int percent)
 {
-	editing = true;
+	programLock.lock();
 	for (int i = 0; i < curProgNames.size(); i++)
 	{
 		if (curProgNames[i] == program)
@@ -212,25 +214,25 @@ void GameGraphics::setProgramPercent(std::string program, int percent)
 			curProgPercent[i] = percent;
 		}
 	}
-	editing = false;
+	programLock.unlock();
 }
 
 void GameGraphics::setInputBuffer(std::string text)
 {
-	editing = true;
+	bufferLock.lock();
 	sprintf_s(bufferText, "%-37s", text.c_str());;
-	editing = false;
+	bufferLock.unlock();
 }
 
 void GameGraphics::addBufferHistory(std::string text)
 {
-	editing = true;
+	bufferLock.lock();
 	bufferHistory.push_back(text);
 	if (bufferHistory.size() > maxBufferHistLines)
 	{
 		bufferHistory.erase(bufferHistory.begin());
 	}
-	editing = false;
+	bufferLock.unlock();
 }
 
 void GameGraphics::setCurrentFolder(FileSystemFolder * folder)
