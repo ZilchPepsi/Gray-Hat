@@ -27,6 +27,8 @@ int GameEngine::init()
 
 	gg.setGraphicsState(state);
 
+	gg.setCurrentInventory(player.getInventory());
+
 	logger.log("game engine initialized");
 
 	return 0;

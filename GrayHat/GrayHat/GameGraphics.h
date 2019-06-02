@@ -70,7 +70,7 @@ class GameGraphics
 		int bufferHistoryRow = curBufferRow - 1;
 		int maxBufferHistLines = 5;
 		int maxInventorySize = 7;
-		int inventoryRow = 12;
+		int inventoryRow = 13;
 		int titleRow = 6;
 		int titleCol = 40;
 		int optionsRow = titleRow + 18;
