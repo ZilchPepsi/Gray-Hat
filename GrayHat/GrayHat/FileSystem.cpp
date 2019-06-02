@@ -51,14 +51,14 @@ int FileSystem::generateSystem()
 	*/
 	int objBranch = rand() % maxDirs + 1;					//the branch in root that will contain the obj file
 	int keyBranch = rand() % maxDirs + 1;					//the branch in root that will contain the key file
-	float spcDif_level = PROB_FILE_MISC/maxHeight;			//increase of special file probability per level
+	float spcDif_level = PROB_FILE_MISC / maxHeight;		//increase of special file probability per level
 	float objDif_level = PROB_FILE_EXESYM / maxHeight;		//increase of objective file probability per level
 	//the above 2 levels ensure that at max depth the probability of placing an objective file is 100%
 
 	bool keyPlaced = false;									//has the key been placed?
 	bool objectivePlaced = false;							//has the objective file been placed?
 	int dirCount = 0;										//number of root directories parsed, used for finding
-																//branch for key and objective files
+															//branch for key and objective files
 	FileSystemObject* obj;
 	FileSystemFolder* fo;
 	FileSystemFile* fi;
