@@ -62,6 +62,13 @@ int GameEngine::update()
 			gg.addBufferHistory(retCMD);
 		}
 
+		//check for tab / autocomplete
+		if (ki.hasTabPressed())
+		{
+			ki.resetTabbed();
+			handleAutocomplete();
+		}
+
 		// update current directory information
 		gg.setCurrentFolder(player.getLocation());
 	}
@@ -197,4 +204,38 @@ void GameEngine::handleArrowKeys()
 		action = ki.popArrowKeyQueue();
 	}
 	gg.setOptionsIndex(optionsIndex);
+}
+
+void GameEngine::handleAutocomplete()
+{
+	std::string curBuffer = ki.getInputBuffer();
+	std::string newBuffer = curBuffer;
+
+	//check if no whitespace (still typing cmd)
+	if (curBuffer.find(" ") == std::string::npos)
+	{
+		// identify CMD
+		for (size_t i = 0; i < NUM_CMDS; i++)
+		{
+			if (CMDS[i].find(curBuffer) != std::string::npos)
+			{
+				newBuffer = CMDS[i] + " ";
+			}
+		}
+	}
+	else if (curBuffer.find(" ") < curBuffer.length() - 1) // first whitespace is before end of buffer string
+	{
+		std::string secStr = curBuffer.substr(curBuffer.find(" ") + 1, std::string::npos); // get from whitespace to end of str
+		std::vector<FileSystemObject *> * contents = player.getLocation()->getContents();
+		for (size_t i = 0; i < contents->size(); i++)
+		{
+			if (contents->at(i)->getName().find(curBuffer) != std::string::npos)
+			{
+				newBuffer = curBuffer.substr(0, curBuffer.length() - curBuffer.find(" ") + 1) + contents->at(i)->getName();
+			}
+		}
+	}
+
+	
+	ki.setInputBuffer(newBuffer);
 }

@@ -20,6 +20,15 @@ std::string KeyboardInput_win::getInputBuffer()
 	return buffer;
 }
 
+void KeyboardInput_win::setInputBuffer(std::string str)
+{
+	keyboardLock.lock();
+	int numAdded = buffer.length() - str.length();
+	buffer = str;
+	cursorPos += numAdded;
+	keyboardLock.unlock();
+}
+
 void KeyboardInput_win::setMaxBufferSize(int l)
 {
 	MAX_BUFFER_LENGTH = l;
@@ -41,6 +50,7 @@ std::string KeyboardInput_win::init()
 	running = true;
 	reading = false;
 	entered = false;
+	tabbed = false;
 	pollingThread = std::thread(&KeyboardInput_win::run, this);
 
 	return "KYBD INIT\n";
@@ -208,6 +218,10 @@ void KeyboardInput_win::poll()
 	if (GetKeyState(VK_RIGHT) & IS_PRESSED)
 	{
 		curPressed[KEY_RIGHT] = true;
+	}
+	if (GetKeyState(VK_TAB) & IS_PRESSED)
+	{
+		curPressed[KEY_TAB] = true;
 	}
 
 	// set number curPressed
@@ -661,6 +675,10 @@ void KeyboardInput_win::poll()
 		log.log("right");
 		arrowKeyQueue.push(ARR_KEY_RIGHT);
 	}
+	if (curPressed[KEY_TAB] && !(prevPressed[KEY_TAB]))
+	{
+		tabbed = true;
+	}
 
 	//push cur to prev and clear cur
 	for (int i = 0; i < NUM_KEYS; i++)
@@ -693,5 +711,17 @@ void KeyboardInput_win::resetEntered()
 {
 	keyboardLock.lock();
 	entered = false;
+	keyboardLock.unlock();
+}
+
+bool KeyboardInput_win::hasTabPressed()
+{
+	return tabbed;
+}
+
+void KeyboardInput_win::resetTabbed()
+{
+	keyboardLock.lock();
+	tabbed = false;
 	keyboardLock.unlock();
 }

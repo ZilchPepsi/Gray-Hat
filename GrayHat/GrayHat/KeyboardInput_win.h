@@ -17,6 +17,7 @@ class KeyboardInput_win : public KeyboardInput
 		~KeyboardInput_win();
 
 		std::string getInputBuffer();
+		void setInputBuffer(std::string str);
 		std::string init();
 		std::string clean();
 		void run();
@@ -25,6 +26,8 @@ class KeyboardInput_win : public KeyboardInput
 		int popArrowKeyQueue();
 		bool hasEntered();
 		void resetEntered();
+		bool hasTabPressed();
+		void resetTabbed();
 
 private:
 
@@ -48,7 +51,7 @@ private:
 
 	std::thread pollingThread;
 	bool running, reading;
-	volatile bool entered;
+	volatile bool entered, tabbed;
 	
 	bool curPressed[NUM_KEYS];
 	bool prevPressed[NUM_KEYS];

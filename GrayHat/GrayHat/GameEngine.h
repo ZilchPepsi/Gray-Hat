@@ -12,6 +12,7 @@
 #include <algorithm>
 #include <locale>
 
+#define NUM_CMDS 4
 #define CMD_MOVE "cd"
 #define CMD_ENCRYPT "encrypt"
 #define CMD_DECRYPT "decrypt"
@@ -44,5 +45,13 @@ class GameEngine
 		unsigned int testVar;
 
 		void handleArrowKeys();
+		void handleAutocomplete();
+
+		std::string CMDS[NUM_CMDS] = {
+			CMD_MOVE,
+			CMD_ENCRYPT,
+			CMD_DECRYPT,
+			CMD_MOVE
+		};
 };
 
