@@ -20,8 +20,13 @@ int GameEngine::init()
 
 	gg.addProgram("test_multithreading");
 
+	logger.log("generating file system");
 	// init FileSystem
 	fs.generateSystem();
+
+	logger.log(fs.getKeyPath());
+	logger.log(fs.getObjPath());
+	logger.log(fs.getPEMPath());
 
 	player.setLocation(fs.getRoot());
 
@@ -82,7 +87,6 @@ int GameEngine::update()
 	}
 
 	gg.setGraphicsState(state);
-	logger.log("GameEngine updated");
 	return 0;
 }
 

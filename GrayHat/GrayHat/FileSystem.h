@@ -3,7 +3,7 @@
 #include "FileSystemFolder.h"
 #include "Logger.h"
 
-#define MAX_TREE_HEIGHT 20
+#define MAX_TREE_HEIGHT 10
 #define MAX_DIRS 4
 #define MAX_CONTENTS 10
 
@@ -22,6 +22,11 @@ class FileSystem
 
 		int generateSystem();
 		FileSystemFolder* getRoot();
+		std::string getKeyPath();
+		std::string getObjPath();
+		std::string getPEMPath();
+		std::string getFilePath(std::string);
+		std::string getFilePath(const char*);
 	
 	private:
 		FileSystemFolder root;

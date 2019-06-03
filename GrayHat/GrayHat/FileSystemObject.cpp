@@ -7,6 +7,7 @@ FileSystemObject::FileSystemObject(std::string str, int typ):logger("FileSystemO
 	displayType = typ;
 	height = 1;
 	size = 1;
+	parent = NULL;
 }
 
 
@@ -72,4 +73,14 @@ FileSystemObject* FileSystemObject::getParent() {
 
 void FileSystemObject::setParent(FileSystemObject* f) {
 	parent = f;
+}
+
+std::string FileSystemObject::getAbsolutePath() {
+	std::string path = "/" + name;
+	FileSystemObject* obj = this;
+	while (obj->parent) {
+		path = "/" + obj->parent->name + path;
+		obj = obj->getParent();
+	}
+	return path;
 }

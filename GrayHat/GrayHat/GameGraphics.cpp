@@ -178,9 +178,27 @@ void GameGraphics::drawCurrentFolder()
 				sizeChars++;
 				size /= 10;
 			}
-			format = "\t-> %-";
-			format += logger.itoa(availableWidth - sizeChars - 9) + "s%d"; //9 because starting '->' is 7 and kB is 2
-			sprintf_s(line, format.c_str(), contents->at(i)->getName().c_str(), contents->at(i)->getSize());
+
+			format = "\t-> %";
+			if (contents->at(i)->getType() == TYPE_FILE_SYM) {
+				FileSystemFile* f = dynamic_cast<FileSystemFile*>(contents->at(i));
+				int nameSize = availableWidth - sizeChars - 13 - f->getName().size();
+				format += "s -> %-";
+				format += logger.itoa(nameSize)+"s%d";
+				if (f->getSymlink()->getType() == TYPE_DIR)
+					sprintf_s(line, format.c_str(), f->getName().c_str(), f->getSymlink()->getName().c_str(),
+						f->getSize());
+				else
+						sprintf_s(line, format.c_str(), f->getName().c_str(),
+							f->getSymlink()->getParent()->getName().c_str(),
+							f->getSize());
+			}
+			else {
+				format += "-"+logger.itoa(availableWidth - sizeChars - 9) + "s%d"; //9 because starting '->' is 7 and kB is 2
+				sprintf_s(line, format.c_str(), contents->at(i)->getName().c_str(), contents->at(i)->getSize());
+			}
+			
+			
 			graphics.writeText(line, contentsRow + i, startPoint, contentColor);
 			graphics.writeText("kB", contentsRow + i, startPoint + (availableWidth - 1), TerminalGraphics::CC_FORE_GRN);
 			//sprintf_s(line, "\t-> %-30s", contents->at(i)->getName().c_str());

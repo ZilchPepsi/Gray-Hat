@@ -43,6 +43,8 @@ public:
 
 	virtual int encrypt(int val);
 
+	virtual std::string getAbsolutePath();
+
 protected:
 	Logger logger;
 

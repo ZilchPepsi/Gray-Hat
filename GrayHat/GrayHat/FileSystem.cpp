@@ -55,6 +55,9 @@ int FileSystem::generateSystem()
 	float objDif_level = PROB_FILE_EXESYM / maxHeight;		//increase of objective file probability per level
 	//the above 2 levels ensure that at max depth the probability of placing an objective file is 100%
 
+	logger.log("objective going on branch " + logger.itoa(objBranch));
+	logger.log("key going on branch" + logger.itoa(keyBranch));
+
 	bool keyPlaced = false;									//has the key been placed?
 	bool objectivePlaced = false;							//has the objective file been placed?
 	int dirCount = 0;										//number of root directories parsed, used for finding
@@ -65,17 +68,21 @@ int FileSystem::generateSystem()
 
 	std::stack<FileSystemObject*> stack;
 	std::vector<FileSystemObject*>* contents = root.getContents();
+	logger.log("starting file iteration in generation");
 	for (std::vector<FileSystemObject*>::iterator it = contents->begin(); it != contents->end(); it++) {
 		
 		//this is a directory
 		if ((*it)->getType() == TYPE_DIR) {
 			dirCount++;
+			logger.log("going into branch " + logger.itoa(dirCount));
 		}
 		stack.push(*it);
 		//this is the DFS approach to populating the map
 		while (!stack.empty()) {
+
 			obj = stack.top();
 			stack.pop();
+
 			//got a directory
 			if ((fo = dynamic_cast<FileSystemFolder*>(obj)) != NULL) {
 				if (fo->getHeight() == maxHeight)
@@ -155,6 +162,7 @@ int FileSystem::generateSystem()
 	}
 	delete contents;
 
+	logger.log("linking symLinks");
 	//links all symbolic links
 	for (std::vector<FileSystemFile*>::iterator it = symlinks.begin(); it != symlinks.end(); it++) {
 		int height = rand() % maxHeight;
@@ -175,8 +183,52 @@ int FileSystem::generateSystem()
 	}
 
 	//TODO set executables
+	logger.log("System generated");
 	return 0;
 }
+
+std::string FileSystem::getFilePath(const char* fileName) {
+
+	logger.log("getting file path");
+
+	std::stack<FileSystemObject*> stack;
+	stack.push(&root);
+
+	FileSystemFolder* fo;
+	FileSystemObject* obj;
+	while (!stack.empty()) {
+		obj = stack.top();
+		stack.pop();
+		
+		if ((fo = dynamic_cast<FileSystemFolder*>(obj)) != NULL) {
+			std::vector<FileSystemObject*>* contents = fo->getContents();
+			for (std::vector<FileSystemObject*>::iterator it = contents->begin(); it != contents->end(); it++) {
+				stack.push(*it);
+			}
+			delete contents;
+		}
+		else if(!obj->getName().compare(fileName)) {
+			logger.log("found file " + obj->getName());
+			return obj->getAbsolutePath();
+		}
+	}
+	return std::string("could not find") + fileName;
+}
+
+std::string FileSystem::getFilePath(std::string str) {
+	return getFilePath(str.c_str());
+}
+
+std::string FileSystem::getKeyPath() {
+	return getFilePath(DEFAULT_KEY_NAME);
+}
+std::string FileSystem::getObjPath() {
+	return getFilePath(DEFAULT_OBJ_NAME);
+}
+std::string FileSystem::getPEMPath() {
+	return getFilePath(DEFAULT_PEM_NAME);
+}
+
 
 FileSystemFolder* FileSystem::getRoot()
 {
