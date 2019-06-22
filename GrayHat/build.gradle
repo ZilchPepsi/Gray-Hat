@@ -2,6 +2,8 @@ plugins {
 	id 'cpp-application'
 }
 
+defaultTasks 'clean', 'install'
+
 task install {
 	dependsOn 'build' 
 	doLast{
