@@ -1,0 +1,14 @@
+plugins {
+	id 'cpp-application'
+}
+
+task install {
+	dependsOn 'build' 
+	doLast{
+		copy{
+			from "$projectDir/src/main/resources/"
+			into "$buildDir/install/main/debug/"
+		}
+		
+	}
+}
