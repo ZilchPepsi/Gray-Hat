@@ -4,3 +4,6 @@
 *.sln
 *.swp
 *.log
+.gradle
+**/build
+**/.vscode

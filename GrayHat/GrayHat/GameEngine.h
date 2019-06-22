@@ -6,6 +6,7 @@
 #include "Player.h"
 #include "FileSystem.h"
 #include "FileSystemFile.h"
+#include "ConsoleHandler.h"
 #include <string>
 #include <vector>
 #include <chrono>
@@ -21,19 +22,23 @@
 class GameEngine
 {
 	public:
-		GameEngine();
+		GameEngine(ConsoleHandler*);
 		~GameEngine();
 
 		int init();
-		int update();
-		int mainLoop();
+		void start();
+
+
 		std::string executeCommand(std::string command);
 
 	private:
 		
 		Logger logger;
 
-		GameGraphics gg;
+		//GameGraphics gg;
+		ConsoleHandler* ch;
+		std::thread thread;
+
 		KeyboardInput_win ki;
 		FileSystem fs;
 		Player player;
@@ -46,6 +51,8 @@ class GameEngine
 
 		void handleArrowKeys();
 		void handleAutocomplete();
+		int update();
+		int mainLoop();
 
 		std::string CMDS[NUM_CMDS] = {
 			CMD_MOVE,

@@ -1,6 +1,6 @@
 #include "GameEngine.h"
 
-GameEngine::GameEngine() :logger("GameEngine")
+GameEngine::GameEngine(ConsoleHandler* ch) :logger("GameEngine"),ch(ch)
 { 
 	init();
 }
@@ -15,10 +15,10 @@ int GameEngine::init()
 	state = STATE_MENU_MAIN;
 	optionsIndex = 0;
 
-	gg.addProgram("test_program");
-	gg.setProgramPercent("test program", 53);
+	//gg.addProgram("test_program");
+	//gg.setProgramPercent("test program", 53);
 
-	gg.addProgram("test_multithreading");
+	//gg.addProgram("test_multithreading");
 
 	logger.log("generating file system");
 	// init FileSystem
@@ -30,9 +30,10 @@ int GameEngine::init()
 
 	player.setLocation(fs.getRoot());
 
-	gg.setGraphicsState(state);
+	//gg.setGraphicsState(state);
 
-	gg.setCurrentInventory(player.getInventory());
+	//gg.setCurrentInventory(player.getInventory());
+	ch->setPlayerInventory(player.getInventory());
 
 	logger.log("game engine initialized");
 
@@ -41,37 +42,38 @@ int GameEngine::init()
 
 int GameEngine::update()
 {
-	if (state == STATE_GAME)
-	{
+	//if (state == STATE_GAME)
+	//{
 
-		gg.setProgramPercent("test_multithreading", testVar);
-		testVar++;
-		testVar %= 100;
+		//gg.setProgramPercent("test_multithreading", testVar);
+		//testVar++;
+		//testVar %= 100;
 		//test keyboard input
-		currentBuffer = ki.getInputBuffer();
-		gg.setInputBuffer(currentBuffer);
+		//currentBuffer = ki.getInputBuffer();
+		//gg.setInputBuffer(currentBuffer);
 
 		//add prev buffers
-		std::string prevBuffer = ki.popBufferQueue();
-		if (prevBuffer != "")
-		{
-			// Execute command
-			std::string retCMD = executeCommand(prevBuffer);
+		//std::string prevBuffer = ki.popBufferQueue();
+		//if (prevBuffer != "")
+		//{
+		//	// Execute command
+		//	std::string retCMD = executeCommand(prevBuffer);
 
-			player.addPrevCommand(prevBuffer);
-			gg.addBufferHistory(retCMD);
-		}
+		//	player.addPrevCommand(prevBuffer);
+		//	//gg.addBufferHistory(retCMD);
+		//}
 
 		//check for tab / autocomplete
-		if (ki.hasTabPressed())
-		{
-			ki.resetTabbed();
-			handleAutocomplete();
-		}
+		//if (ki.hasTabPressed())
+		//{
+		//	ki.resetTabbed();
+		//	handleAutocomplete();
+		//}
 
 		// update current directory information
-		gg.setCurrentFolder(player.getLocation());
-	}
+		//gg.setCurrentFolder(player.getLocation());
+		ch->setCurrentDirectory(player.getLocation());
+	/*}
 	else if (state == STATE_MENU_MAIN)
 	{
 		handleArrowKeys();
@@ -91,9 +93,9 @@ int GameEngine::update()
 			}
 			ki.resetEntered();
 		}
-	}
+	}*/
 
-	gg.setGraphicsState(state);
+	//gg.setGraphicsState(state);
 	return 0;
 }
 
@@ -107,6 +109,10 @@ int GameEngine::mainLoop()
 	}
 
 	return 0;
+}
+
+void GameEngine::start() {
+	thread = std::thread(&GameEngine::mainLoop, this);
 }
 
 std::string GameEngine::executeCommand(std::string command)
@@ -203,7 +209,7 @@ void GameEngine::handleArrowKeys()
 		}
 		action = ki.popArrowKeyQueue();
 	}
-	gg.setOptionsIndex(optionsIndex);
+	//gg.setOptionsIndex(optionsIndex);
 }
 
 void GameEngine::handleAutocomplete()
