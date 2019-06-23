@@ -10,18 +10,9 @@ GameEngine::~GameEngine(){}
 int GameEngine::init()
 {
 	logger.log("game engine initializing");
-	running = true;
-	testVar = 0;
-	//state = STATE_MENU_MAIN;
-	//optionsIndex = 0;
 
-	//gg.addProgram("test_program");
-	//gg.setProgramPercent("test program", 53);
-
-	//gg.addProgram("test_multithreading");
-
-	logger.log("generating file system");
 	// init FileSystem
+	logger.log("generating file system");
 	fs.generateSystem();
 
 	logger.log(fs.getKeyPath());
@@ -30,9 +21,7 @@ int GameEngine::init()
 
 	player.setLocation(fs.getRoot());
 
-	//gg.setGraphicsState(state);
 
-	//gg.setCurrentInventory(player.getInventory());
 	ch->setPlayerInventory(player.getInventory());
 
 	logger.log("game engine initialized");
@@ -42,61 +31,8 @@ int GameEngine::init()
 
 int GameEngine::update()
 {
-	if (ch->getState() == STATE_GAME)
-	{
-
-		//gg.setProgramPercent("test_multithreading", testVar);
-		//testVar++;
-		//testVar %= 100;
-		//test keyboard input
-		//currentBuffer = ki.getInputBuffer();
-		//gg.setInputBuffer(currentBuffer);
-
-		//add prev buffers
-		//std::string prevBuffer = ki.popBufferQueue();
-		//if (prevBuffer != "")
-		//{
-		//	// Execute command
-		//	std::string retCMD = executeCommand(prevBuffer);
-
-		//	player.addPrevCommand(prevBuffer);
-		//	//gg.addBufferHistory(retCMD);
-		//}
-
-		//check for tab / autocomplete
-		//if (ki.hasTabPressed())
-		//{
-		//	ki.resetTabbed();
-		//	handleAutocomplete();
-		//}
-
-		// update current directory information
-		//gg.setCurrentFolder(player.getLocation());
-
-		ch->setCurrentDirectory(player.getLocation());
-		executeCommand(ch->getNextCommand());
-	}
-	else if (ch->getState() == STATE_MENU)
-	{
-		/*handleArrowKeys();
-		if (ki.hasEntered())
-		{
-			if (optionsIndex == 0)
-			{
-				state = STATE_GAME;
-			}
-			else if (optionsIndex == 1)
-			{
-				state = STATE_GAME;
-			}
-			else if (optionsIndex == 2)
-			{
-				running = false;
-			}
-			ki.resetEntered();
-		}*/
-	}
-	//gg.setGraphicsState(state);
+	ch->setCurrentDirectory(player.getLocation());
+	executeCommand(ch->getNextCommand());
 	return 0;
 }
 
@@ -105,7 +41,6 @@ int GameEngine::mainLoop()
 	while (ch->getState() != STATE_EXIT)
 	{
 		update();
-
 		std::this_thread::sleep_for(std::chrono::milliseconds(100));
 	}
 
@@ -116,29 +51,64 @@ void GameEngine::start() {
 	thread = std::thread(&GameEngine::mainLoop, this);
 }
 
-std::string GameEngine::executeCommand(std::string command)
-{
-	// TODO
-	//extract lower case string up until 1st white space
-	std::locale loc;
-	std::string cmdLower = "";
-	for (size_t i = 0; i < command.length(); i++)
-		cmdLower += std::tolower(command[i], loc); // convert to lower case
-	std::string commandCode = cmdLower.substr(0, cmdLower.find(' ')); // get string up until 1st whitespace
-
-	if (commandCode == CMD_MOVE)
+std::vector<std::string>* GameEngine::parseArgs(std::string args){
+	std::vector<std::string>* ret = new std::vector<std::string>();
+	if(args.find(' ') == std::string::npos)
 	{
-		bool moved = false;
-		//get string after 1st whitespace
-		int whtspaceIndex = (int)(cmdLower.find(' ') + 1);
-		std::string dirName = cmdLower.substr(whtspaceIndex, cmdLower.length() - whtspaceIndex);
+		ret->push_back(args);
+		return ret;
+	}
+	int pos = 0;	
+	for(int x= 0; x< args.size(); x++){
+		if(args[x] == ' ' || args[x] == '\t'){
+			if(x > pos)
+			{
+				ret->push_back(args.substr(pos,x-pos));
+			}
+			while(x+1 < args.size() && (args[x+1] == ' ' || args[x+1] == '\t')){
+				x++;
+			}
+			pos = x+1;
+		}
+	}
+	return ret;
+}
+
+void GameEngine::executeCommand(std::string command)
+{
+	if(command.empty())
+		return;
+
+	std::string commandCode;
+	std::vector<std::string>* args = NULL;
+	if(command.find(" ") != std::string::npos){
+		commandCode = command.substr(0, command.find_first_of(' '));
+		args = parseArgs(command.substr(command.find_first_of(' ')+1));
+	}else{
+		commandCode = command;
+	}
+
+	if(commandCode == CMD_MOVE)
+		cmd_move(args);
+	else if(commandCode == CMD_CP)
+		cmd_cp(args);
+	else if(commandCode == CMD_ENCRYPT)
+		cmd_encrypt(args);
+	else if(commandCode == CMD_DECRYPT)
+		cmd_decrypt(args);
+	delete args;
+}
+void GameEngine::cmd_move(std::vector<std::string>* args){
+
+		if(args->empty())
+			return;
+		std::string dirName = (*args)[0];
 
 		if (dirName == "..")
 		{
 			if (player.getLocation()->getParent() != NULL)
 			{
 				player.setLocation(dynamic_cast<FileSystemFolder*>(player.getLocation()->getParent()));
-				moved = true;
 			}
 		}
 		else
@@ -149,102 +119,41 @@ std::string GameEngine::executeCommand(std::string command)
 				if (contents->at(i)->getType() == TYPE_DIR && contents->at(i)->getName() == dirName)
 				{
 					player.setLocation(dynamic_cast<FileSystemFolder*>(contents->at(i)));
-					moved = true;
+					break;
 				}
 				else if (contents->at(i)->getType() == TYPE_FILE_SYM && contents->at(i)->getName() == dirName)
 				{
 					FileSystemObject * symTarget = (dynamic_cast<FileSystemFile*>(contents->at(i)))->getSymlink();
-					if(symTarget->getType() == TYPE_DIR) // targetting a folder
+					if(symTarget->getType() == TYPE_DIR) // targeting a folder
 						player.setLocation(dynamic_cast<FileSystemFolder*>(symTarget));
-					else //targetting a file, jump to parent directory
+					else //targeting a file, jump to parent directory
 						player.setLocation(dynamic_cast<FileSystemFolder*>(symTarget->getParent()));
-					moved = true;
+					break;
 				}
 			}
 			delete contents;
 		}
-		if(moved)
-			return "Directory moved to: " + dirName;
-		return "Invalid directory: " + dirName;
-	}
-	else if (commandCode == CMD_CPY)
-	{
-		logger.log("executing copy command: "+cmdLower);
-		bool copied = false;
-		//get string after 1st whitespace
-		int whtspaceIndex = (int)(cmdLower.find(' ') + 1);
-		std::string filename = cmdLower.substr(whtspaceIndex, cmdLower.length() - whtspaceIndex);
-		
-		std::vector<FileSystemObject *> * contents = player.getLocation()->getContents();
-		for (size_t i = 0; i < contents->size(); i++)
-		{
-			if ((contents->at(i)->getType() == TYPE_FILE_EXE || contents->at(i)->getType() == TYPE_FILE_MISC) && contents->at(i)->getName() == filename)
-			{
-				player.addInventory(dynamic_cast<FileSystemFile*>(contents->at(i)));
-				copied = true;
-			}
-		}
-		delete contents;
-		
-		if (copied)
-			return "File copied to inventory: " + filename;
-		return "File not found: " + filename;
-	}
-	
-	return "Invalid command: " + command;
 }
 
-void GameEngine::handleArrowKeys()
-{
-	//int action = ki.popArrowKeyQueue();
-	/*while (action != ARR_KEY_NONE)
+void GameEngine::cmd_cp(std::vector<std::string>* args){
+
+	std::string filename = (*args)[0];		
+	std::vector<FileSystemObject *> * contents = player.getLocation()->getContents();
+	for (size_t i = 0; i < contents->size(); i++)
 	{
-		if (action == ARR_KEY_UP)
+		if ((contents->at(i)->getType() == TYPE_FILE_EXE || contents->at(i)->getType() == TYPE_FILE_MISC) && contents->at(i)->getName() == filename)
 		{
-			if (optionsIndex > 0)
-				optionsIndex--;
+			player.addInventory(dynamic_cast<FileSystemFile*>(contents->at(i)));
+			break;
 		}
-		else if (action == ARR_KEY_DOWN)
-		{
-			if (optionsIndex < 2)
-				optionsIndex++;
-		}
-		action = ki.popArrowKeyQueue();
-	}*/
-	//gg.setOptionsIndex(optionsIndex);
+	}
+	delete contents;
 }
 
-void GameEngine::handleAutocomplete()
-{
-	/*std::string curBuffer = ki.getInputBuffer();
-	std::string newBuffer = curBuffer;
+void GameEngine::cmd_encrypt(std::vector<std::string>*){
+	//TODO
+}
 
-	//check if no whitespace (still typing cmd)
-	if (curBuffer.find(" ") == std::string::npos)
-	{
-		// identify CMD
-		for (size_t i = 0; i < NUM_CMDS; i++)
-		{
-			if (CMDS[i].find(curBuffer) != std::string::npos)
-			{
-				newBuffer = CMDS[i] + " ";
-			}
-		}
-	}
-	else if (curBuffer.find(" ") < curBuffer.length() - 1) // first whitespace is before end of buffer string
-	{
-		std::string secStr = curBuffer.substr(curBuffer.find(" ") + 1, std::string::npos); // get from whitespace to end of str
-		std::vector<FileSystemObject *> * contents = player.getLocation()->getContents();
-		for (size_t i = 0; i < contents->size(); i++)
-		{
-			if (contents->at(i)->getName().find(curBuffer) != std::string::npos)
-			{
-				newBuffer = curBuffer.substr(0, curBuffer.length() - curBuffer.find(" ") + 1) + contents->at(i)->getName();
-			}
-		}
-	}
-
-	
-	ki.setInputBuffer(newBuffer);
-	*/
+void GameEngine::cmd_decrypt(std::vector<std::string>*){
+	//TODO
 }

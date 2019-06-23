@@ -13,7 +13,7 @@
 #define CMD_MOVE "cd"
 #define CMD_ENCRYPT "encrypt"
 #define CMD_DECRYPT "decrypt"
-#define CMD_CPY "cp"
+#define CMD_CP "cp"
 
 class GameEngine
 {
@@ -25,7 +25,6 @@ class GameEngine
 		void start();
 
 
-		std::string executeCommand(std::string command);
 
 	private:
 		
@@ -37,16 +36,14 @@ class GameEngine
 		FileSystem fs;
 		Player player;
 
-		//int state, optionsIndex;
-		
-		bool running;
-		std::string currentBuffer;
-		unsigned int testVar;
-
-		void handleArrowKeys();
-		void handleAutocomplete();
 		int update();
 		int mainLoop();
+		void executeCommand(std::string);
+		void cmd_move	(std::vector<std::string>*);
+		void cmd_cp		(std::vector<std::string>*);
+		void cmd_encrypt(std::vector<std::string>*);
+		void cmd_decrypt(std::vector<std::string>*);
+		std::vector<std::string>* parseArgs(std::string);
 
 		std::string CMDS[NUM_CMDS] = {
 			CMD_MOVE,
